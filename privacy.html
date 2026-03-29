@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Do Vizinho — Compre, venda e doe no seu bairro. Marketplace hiperlocal gratuito.">
+<meta property="og:title" content="Do Vizinho — Vendas e doações">
+<meta property="og:description" content="Compre, venda e doe no seu bairro. Grátis e fácil.">
+<meta property="og:image" content="/assets/og-image.jpg">
+<title>Do Vizinho — Vendas e doações</title>
+<link rel="icon" href="/assets/favicon.png">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --pri: #2DB67D;
+    --dark: #0F172A;
+    --txt: #1A1A2E;
+    --mut: #666;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; color: var(--txt); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0F172A 0%, #1a2a4a 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(45,182,125,0.15) 0%, transparent 70%);
+    top: -100px; left: 50%; transform: translateX(-50%);
+  }
+  .logo-wrap { margin-bottom: 32px; position: relative; }
+  .logo-wrap img { width: 120px; height: 120px; object-fit: contain; }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .hero h1 span { color: var(--pri); }
+  .hero p {
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 48px;
+    max-width: 500px;
+  }
+  .store-btns {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 64px;
+  }
+  .store-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 14px 24px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.2s;
+    backdrop-filter: blur(10px);
+  }
+  .store-btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+  .store-btn .icon { font-size: 28px; }
+  .store-btn .text { text-align: left; }
+  .store-btn .sub { font-size: 11px; opacity: 0.7; display: block; }
+  .store-btn .name { font-size: 17px; font-weight: 700; display: block; }
+  .coming-soon {
+    background: rgba(45,182,125,0.1);
+    border: 1px solid rgba(45,182,125,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: var(--pri);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* FEATURES */
+  .features {
+    padding: 80px 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .features h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; margin-bottom: 12px; }
+  .features .sub { font-size: 16px; color: var(--mut); margin-bottom: 48px; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+  .feature-card {
+    background: #F8FAFC;
+    border-radius: 20px;
+    padding: 28px 20px;
+    border: 1px solid #E8ECF4;
+  }
+  .feature-card .icon { font-size: 40px; margin-bottom: 16px; }
+  .feature-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+  .feature-card p { font-size: 14px; color: var(--mut); line-height: 1.6; }
+
+  /* FOOTER */
+  footer {
+    background: #F8FAFC;
+    border-top: 1px solid #E8ECF4;
+    padding: 32px 24px;
+    text-align: center;
+  }
+  footer .links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  footer a { color: var(--mut); text-decoration: none; font-size: 13px; }
+  footer a:hover { color: var(--pri); }
+  footer p { font-size: 12px; color: #bbb; }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="logo-wrap">
+    <img src="/assets/icon.png" alt="Do Vizinho" onerror="this.style.fontSize='80px';this.outerHTML='<span style=font-size:80px>🏘️</span>'" />
+  </div>
+  <h1>Do <span>Vizinho</span></h1>
+  <p>Compre, venda e doe no seu bairro.<br>Grátis, simples e perto de você.</p>
+
+  <div class="store-btns">
+    <a href="https://play.google.com/store/apps/details?id=com.vizinhovendedoa.app" class="store-btn" target="_blank">
+      <span class="icon">🤖</span>
+      <span class="text">
+        <span class="sub">Disponível no</span>
+        <span class="name">Google Play</span>
+      </span>
+    </a>
+    <a href="#" class="store-btn" style="opacity:0.6;cursor:default">
+      <span class="icon">🍎</span>
+      <span class="text">
+        <span class="sub">Em breve na</span>
+        <span class="name">App Store</span>
+        <span class="coming-soon">Em breve</span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<section class="features">
+  <h2>Tudo que você precisa no bairro</h2>
+  <p class="sub">Simples, rápido e completamente grátis</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="icon">📍</div>
+      <h3>Hiperlocal</h3>
+      <p>Veja apenas anúncios próximos a você. De 500m a 5km do seu endereço.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">💬</div>
+      <h3>Contato direto</h3>
+      <p>Fale pelo WhatsApp direto com o anunciante. Sem intermediários.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🎁</div>
+      <h3>Doe e receba</h3>
+      <p>Dê uma nova vida aos seus objetos. Doe para quem precisa no bairro.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🐾</div>
+      <h3>Pets perdidos</h3>
+      <p>Ajude a encontrar animais perdidos ou encontrados na sua região.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🗺️</div>
+      <h3>Mapa do bairro</h3>
+      <p>Veja os anúncios no mapa e encontre o que procura perto de você.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🛡️</div>
+      <h3>Seguro</h3>
+      <p>Sistema anti-golpe integrado com avisos e denúncias de usuários.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="links">
+    <a href="/privacy">Política de Privacidade</a>
+    <a href="/delete">Excluir minha conta</a>
+    <a href="mailto:dovizinhoapp@gmail.com">Contato</a>
+  </div>
+  <p>© 2026 Do Vizinho. Todos os direitos reservados.</p>
+</footer>
+
+</body>
+</html>

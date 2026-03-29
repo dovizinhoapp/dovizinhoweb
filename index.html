@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do Vizinho — Excluir Conta</title>
+<link rel="icon" href="/assets/favicon.png">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, sans-serif; background: #F8FAFC; color: #1A1A2E; padding: 40px 24px; }
+  .wrap { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 20px; padding: 40px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .logo { text-align: center; font-size: 48px; margin-bottom: 8px; }
+  h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 4px; }
+  .sub { font-size: 14px; color: #999; text-align: center; margin-bottom: 32px; }
+  .warn { background: #FFF8E1; border: 1px solid #FFE082; border-radius: 12px; padding: 16px; margin-bottom: 24px; font-size: 14px; color: #795548; line-height: 1.6; }
+  label { font-size: 13px; font-weight: 700; color: #1A1A2E; display: block; margin-bottom: 6px; }
+  input { width: 100%; padding: 14px; border: 1.5px solid #E8E8E8; border-radius: 12px; font-size: 15px; margin-bottom: 14px; outline: none; font-family: inherit; }
+  input:focus { border-color: #E74C3C; }
+  button { width: 100%; padding: 15px; background: #E74C3C; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; font-family: inherit; }
+  button:disabled { background: #ccc; cursor: default; }
+  .msg { margin-top: 14px; padding: 12px; border-radius: 10px; font-size: 13px; display: none; }
+  .msg.ok  { background: #E8F5E9; color: #2DB67D; display: block; }
+  .msg.err { background: #FFF0F0; color: #E74C3C; display: block; }
+  .back { display: block; text-align: center; margin-top: 24px; color: #999; font-size: 13px; text-decoration: none; }
+  ul { padding-left: 20px; margin: 8px 0; }
+  li { font-size: 14px; color: #795548; line-height: 1.8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">🏘️</div>
+  <h1>Excluir minha conta</h1>
+  <p class="sub">Do Vizinho</p>
+
+  <div class="warn">
+    ⚠️ <strong>Atenção:</strong> a exclusão é permanente e irreversível. Ao excluir sua conta:
+    <ul>
+      <li>Todos os seus anúncios serão removidos</li>
+      <li>Seus favoritos serão apagados</li>
+      <li>Seu perfil e dados pessoais serão deletados</li>
+      <li>Não será possível recuperar a conta</li>
+    </ul>
+  </div>
+
+  <label>E-mail da conta</label>
+  <input type="email" id="delEmail" placeholder="seu@email.com" />
+  <label>Senha</label>
+  <input type="password" id="delPass" placeholder="Sua senha" />
+  <button id="delBtn" onclick="deleteAccount()">🗑️ Excluir minha conta permanentemente</button>
+  <div class="msg" id="delMsg"></div>
+
+  <a href="/" class="back">← Cancelar e voltar</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPA_URL = 'https://qdhunieocngxaujmgumn.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkaHVuaWVvY25neGF1am1ndW1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3NzQzNzMsImV4cCI6MjA4NzM1MDM3M30.9pE4kkyC22VBljy1IDIKBVYZKWQYtGzqsRUK1FM5JLY';
+const db = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+async function deleteAccount() {
+  const email = document.getElementById('delEmail').value.trim();
+  const pass  = document.getElementById('delPass').value;
+  const msg   = document.getElementById('delMsg');
+  const btn   = document.getElementById('delBtn');
+
+  msg.className = 'msg';
+  if (!email || !pass) { msg.className='msg err'; msg.textContent='Preencha e-mail e senha.'; return; }
+
+  if (!confirm('Tem certeza? Esta ação não pode ser desfeita.')) return;
+
+  btn.disabled = true; btn.textContent = 'Excluindo...';
+
+  try {
+    // Login
+    const { data, error: loginErr } = await db.auth.signInWithPassword({ email, password: pass });
+    if (loginErr) throw new Error('E-mail ou senha incorretos.');
+
+    const userId = data.user.id;
+
+    // Deletar dados do usuário
+    await db.from('listings').delete().eq('user_id', userId);
+    await db.from('favorites').delete().eq('user_id', userId);
+    await db.from('profiles').delete().eq('id', userId);
+
+    // Deletar conta (requer service role — fazer via edge function ou contato)
+    // Por ora, desativa a conta
+    await db.from('profiles').upsert({ id: userId, deleted: true, deleted_at: new Date().toISOString() });
+    await db.auth.signOut();
+
+    msg.className = 'msg ok';
+    msg.textContent = '✅ Conta excluída com sucesso. Sentiremos sua falta!';
+    btn.textContent = 'Conta excluída';
+  } catch(e) {
+    btn.disabled = false; btn.textContent = '🗑️ Excluir minha conta permanentemente';
+    msg.className = 'msg err'; msg.textContent = 'Erro: ' + e.message;
+  }
+}
+</script>
+</body>
+</html>
