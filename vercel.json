@@ -1,9 +1,1 @@
-{
-  "routes": [
-    { "src": "/", "dest": "/index.html" },
-    { "src": "/reset-password", "dest": "/reset-password.html" },
-    { "src": "/privacy", "dest": "/privacy.html" },
-    { "src": "/delete", "dest": "/delete.html" },
-    { "src": "/admin", "dest": "/admin.html" }
-  ]
-}
+{}
