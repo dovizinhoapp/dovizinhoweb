@@ -3,99 +3,204 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Do Vizinho — Excluir Conta</title>
+<meta name="description" content="Do Vizinho — Compre, venda e doe no seu bairro. Marketplace hiperlocal gratuito.">
+<meta property="og:title" content="Do Vizinho — Vendas e doações">
+<meta property="og:description" content="Compre, venda e doe no seu bairro. Grátis e fácil.">
+<meta property="og:image" content="/assets/og-image.jpg">
+<title>Do Vizinho — Vendas e doações</title>
 <link rel="icon" href="/assets/favicon.png">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, sans-serif; background: #F8FAFC; color: #1A1A2E; padding: 40px 24px; }
-  .wrap { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 20px; padding: 40px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-  .logo { text-align: center; font-size: 48px; margin-bottom: 8px; }
-  h1 { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 4px; }
-  .sub { font-size: 14px; color: #999; text-align: center; margin-bottom: 32px; }
-  .warn { background: #FFF8E1; border: 1px solid #FFE082; border-radius: 12px; padding: 16px; margin-bottom: 24px; font-size: 14px; color: #795548; line-height: 1.6; }
-  label { font-size: 13px; font-weight: 700; color: #1A1A2E; display: block; margin-bottom: 6px; }
-  input { width: 100%; padding: 14px; border: 1.5px solid #E8E8E8; border-radius: 12px; font-size: 15px; margin-bottom: 14px; outline: none; font-family: inherit; }
-  input:focus { border-color: #E74C3C; }
-  button { width: 100%; padding: 15px; background: #E74C3C; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; font-family: inherit; }
-  button:disabled { background: #ccc; cursor: default; }
-  .msg { margin-top: 14px; padding: 12px; border-radius: 10px; font-size: 13px; display: none; }
-  .msg.ok  { background: #E8F5E9; color: #2DB67D; display: block; }
-  .msg.err { background: #FFF0F0; color: #E74C3C; display: block; }
-  .back { display: block; text-align: center; margin-top: 24px; color: #999; font-size: 13px; text-decoration: none; }
-  ul { padding-left: 20px; margin: 8px 0; }
-  li { font-size: 14px; color: #795548; line-height: 1.8; }
+  :root {
+    --pri: #2DB67D;
+    --dark: #0F172A;
+    --txt: #1A1A2E;
+    --mut: #666;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; color: var(--txt); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0F172A 0%, #1a2a4a 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(45,182,125,0.15) 0%, transparent 70%);
+    top: -100px; left: 50%; transform: translateX(-50%);
+  }
+  .logo-wrap { margin-bottom: 32px; position: relative; }
+  .logo-wrap img { width: 120px; height: 120px; object-fit: contain; }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .hero h1 span { color: var(--pri); }
+  .hero p {
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 48px;
+    max-width: 500px;
+  }
+  .store-btns {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 64px;
+  }
+  .store-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 14px 24px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.2s;
+    backdrop-filter: blur(10px);
+  }
+  .store-btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+  .store-btn .icon { font-size: 28px; }
+  .store-btn .text { text-align: left; }
+  .store-btn .sub { font-size: 11px; opacity: 0.7; display: block; }
+  .store-btn .name { font-size: 17px; font-weight: 700; display: block; }
+  .coming-soon {
+    background: rgba(45,182,125,0.1);
+    border: 1px solid rgba(45,182,125,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: var(--pri);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* FEATURES */
+  .features {
+    padding: 80px 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .features h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; margin-bottom: 12px; }
+  .features .sub { font-size: 16px; color: var(--mut); margin-bottom: 48px; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+  .feature-card {
+    background: #F8FAFC;
+    border-radius: 20px;
+    padding: 28px 20px;
+    border: 1px solid #E8ECF4;
+  }
+  .feature-card .icon { font-size: 40px; margin-bottom: 16px; }
+  .feature-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+  .feature-card p { font-size: 14px; color: var(--mut); line-height: 1.6; }
+
+  /* FOOTER */
+  footer {
+    background: #F8FAFC;
+    border-top: 1px solid #E8ECF4;
+    padding: 32px 24px;
+    text-align: center;
+  }
+  footer .links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+  footer a { color: var(--mut); text-decoration: none; font-size: 13px; }
+  footer a:hover { color: var(--pri); }
+  footer p { font-size: 12px; color: #bbb; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="logo">🏘️</div>
-  <h1>Excluir minha conta</h1>
-  <p class="sub">Do Vizinho</p>
 
-  <div class="warn">
-    ⚠️ <strong>Atenção:</strong> a exclusão é permanente e irreversível. Ao excluir sua conta:
-    <ul>
-      <li>Todos os seus anúncios serão removidos</li>
-      <li>Seus favoritos serão apagados</li>
-      <li>Seu perfil e dados pessoais serão deletados</li>
-      <li>Não será possível recuperar a conta</li>
-    </ul>
+<section class="hero">
+  <div class="logo-wrap">
+    <img src="/assets/icon.png" alt="Do Vizinho" onerror="this.style.fontSize='80px';this.outerHTML='<span style=font-size:80px>🏘️</span>'" />
   </div>
+  <h1>Do <span>Vizinho</span></h1>
+  <p>Compre, venda e doe no seu bairro.<br>Grátis, simples e perto de você.</p>
 
-  <label>E-mail da conta</label>
-  <input type="email" id="delEmail" placeholder="seu@email.com" />
-  <label>Senha</label>
-  <input type="password" id="delPass" placeholder="Sua senha" />
-  <button id="delBtn" onclick="deleteAccount()">🗑️ Excluir minha conta permanentemente</button>
-  <div class="msg" id="delMsg"></div>
+  <div class="store-btns">
+    <a href="https://play.google.com/store/apps/details?id=com.vizinhovendedoa.app" class="store-btn" target="_blank">
+      <span class="icon">🤖</span>
+      <span class="text">
+        <span class="sub">Disponível no</span>
+        <span class="name">Google Play</span>
+      </span>
+    </a>
+    <a href="#" class="store-btn" style="opacity:0.6;cursor:default">
+      <span class="icon">🍎</span>
+      <span class="text">
+        <span class="sub">Em breve na</span>
+        <span class="name">App Store</span>
+        <span class="coming-soon">Em breve</span>
+      </span>
+    </a>
+  </div>
+</section>
 
-  <a href="/" class="back">← Cancelar e voltar</a>
-</div>
+<section class="features">
+  <h2>Tudo que você precisa no bairro</h2>
+  <p class="sub">Simples, rápido e completamente grátis</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="icon">📍</div>
+      <h3>Hiperlocal</h3>
+      <p>Veja apenas anúncios próximos a você. De 500m a 5km do seu endereço.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">💬</div>
+      <h3>Contato direto</h3>
+      <p>Fale pelo WhatsApp direto com o anunciante. Sem intermediários.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🎁</div>
+      <h3>Doe e receba</h3>
+      <p>Dê uma nova vida aos seus objetos. Doe para quem precisa no bairro.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🐾</div>
+      <h3>Pets perdidos</h3>
+      <p>Ajude a encontrar animais perdidos ou encontrados na sua região.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🗺️</div>
+      <h3>Mapa do bairro</h3>
+      <p>Veja os anúncios no mapa e encontre o que procura perto de você.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🛡️</div>
+      <h3>Seguro</h3>
+      <p>Sistema anti-golpe integrado com avisos e denúncias de usuários.</p>
+    </div>
+  </div>
+</section>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-const SUPA_URL = 'https://qdhunieocngxaujmgumn.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkaHVuaWVvY25neGF1am1ndW1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3NzQzNzMsImV4cCI6MjA4NzM1MDM3M30.9pE4kkyC22VBljy1IDIKBVYZKWQYtGzqsRUK1FM5JLY';
-const db = supabase.createClient(SUPA_URL, SUPA_KEY);
+<footer>
+  <div class="links">
+    <a href="/privacy">Política de Privacidade</a>
+    <a href="/delete">Excluir minha conta</a>
+    <a href="mailto:dovizinhoapp@gmail.com">Contato</a>
+  </div>
+  <p>© 2026 Do Vizinho. Todos os direitos reservados.</p>
+</footer>
 
-async function deleteAccount() {
-  const email = document.getElementById('delEmail').value.trim();
-  const pass  = document.getElementById('delPass').value;
-  const msg   = document.getElementById('delMsg');
-  const btn   = document.getElementById('delBtn');
-
-  msg.className = 'msg';
-  if (!email || !pass) { msg.className='msg err'; msg.textContent='Preencha e-mail e senha.'; return; }
-
-  if (!confirm('Tem certeza? Esta ação não pode ser desfeita.')) return;
-
-  btn.disabled = true; btn.textContent = 'Excluindo...';
-
-  try {
-    // Login
-    const { data, error: loginErr } = await db.auth.signInWithPassword({ email, password: pass });
-    if (loginErr) throw new Error('E-mail ou senha incorretos.');
-
-    const userId = data.user.id;
-
-    // Deletar dados do usuário
-    await db.from('listings').delete().eq('user_id', userId);
-    await db.from('favorites').delete().eq('user_id', userId);
-    await db.from('profiles').delete().eq('id', userId);
-
-    // Deletar conta (requer service role — fazer via edge function ou contato)
-    // Por ora, desativa a conta
-    await db.from('profiles').upsert({ id: userId, deleted: true, deleted_at: new Date().toISOString() });
-    await db.auth.signOut();
-
-    msg.className = 'msg ok';
-    msg.textContent = '✅ Conta excluída com sucesso. Sentiremos sua falta!';
-    btn.textContent = 'Conta excluída';
-  } catch(e) {
-    btn.disabled = false; btn.textContent = '🗑️ Excluir minha conta permanentemente';
-    msg.className = 'msg err'; msg.textContent = 'Erro: ' + e.message;
-  }
-}
-</script>
 </body>
 </html>
