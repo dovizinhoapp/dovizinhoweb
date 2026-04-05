@@ -129,7 +129,6 @@ tr:hover{background:var(--bg3);}
 <div class="ni" data-page="users"><span class="ic">👥</span><span>Usuários</span></div>
 <div class="ni" data-page="reports"><span class="ic">⚠️</span><span>Denúncias</span><span class="bdg" id="RB">0</span></div>
 <div class="ni" data-page="pets"><span class="ic">🐾</span><span>Pets</span></div>
-<div class="ni" data-page="config"><span class="ic">⚙️</span><span>Configurações</span></div>
 </div>
 <div class="sidebar-footer"><p class="user" id="AE"></p><button onclick="doLogout()">Sair</button></div>
 </div>
@@ -205,37 +204,6 @@ tr:hover{background:var(--bg3);}
 <div class="topbar"><h1>🐾 Pets Perdidos</h1></div>
 <div class="content"><div class="tc"><table><thead><tr><th>Foto</th><th>Título</th><th>Descrição</th><th>Bairro</th><th>Data</th><th>Contato</th><th>Ações</th></tr></thead><tbody id="PT"></tbody></table></div></div></div>
 
-<div id="page-config" class="page" style="display:none">
-<div class="topbar"><h1>⚙️ Configurações</h1></div>
-<div class="content" style="padding:16px;max-width:600px;overflow-y:auto">
-  <div style="background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:20px;margin-bottom:16px">
-    <h3 style="font-size:14px;font-weight:800;margin-bottom:4px;color:var(--txt)">💬 Número de Suporte (Pro / Loja)</h3>
-    <p style="font-size:12px;color:var(--txt2);margin-bottom:14px;line-height:1.6">Aparece como botão "💬 Falar com suporte" para usuários Pro e Loja.<br>Formato sem símbolos. Ex: <strong>5511987654321</strong></p>
-    <div style="display:flex;gap:8px">
-      <input id="cfgSupportPhone" type="tel" placeholder="5511999999999" style="flex:1;padding:12px 14px;border-radius:10px;border:1px solid var(--brd);background:var(--bg3);color:var(--txt);font-size:14px;font-family:inherit;outline:none">
-      <button onclick="saveCfgSupport()" style="background:var(--pri);border:none;border-radius:10px;padding:12px 20px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Salvar</button>
-    </div>
-    <p id="cfgSupportMsg" style="font-size:12px;margin-top:8px"></p>
-  </div>
-  <div style="background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:20px;margin-bottom:16px">
-    <h3 style="font-size:14px;font-weight:800;margin-bottom:14px;color:var(--txt)">🛡️ Regras do App</h3>
-    <table style="width:100%;font-size:12px;border-collapse:collapse">
-      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:8px 0;color:var(--txt2)">Expiração plano Free</td><td style="font-weight:700;color:var(--pri);text-align:right">30 dias</td></tr>
-      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:8px 0;color:var(--txt2)">Expiração plano Pro</td><td style="font-weight:700;color:var(--pri);text-align:right">90 dias</td></tr>
-      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:8px 0;color:var(--txt2)">Expiração plano Loja</td><td style="font-weight:700;color:var(--pri);text-align:right">Permanente</td></tr>
-      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:8px 0;color:var(--txt2)">Anúncios simultâneos Free</td><td style="font-weight:700;color:var(--pri);text-align:right">10</td></tr>
-      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:8px 0;color:var(--txt2)">Fotos por anúncio Free / Pro / Loja</td><td style="font-weight:700;color:var(--pri);text-align:right">1 / 3 / 5</td></tr>
-      <tr><td style="padding:8px 0;color:var(--txt2)">Denúncias para auto-remoção</td><td style="font-weight:700;color:var(--pri);text-align:right">3</td></tr>
-    </table>
-  </div>
-  <div style="background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:20px">
-    <h3 style="font-size:14px;font-weight:800;margin-bottom:12px;color:var(--txt)">👑 Administradores</h3>
-    <div style="padding:8px 0;border-bottom:1px solid var(--brd);font-size:13px">👑 gmenquini@gmail.com</div>
-    <div style="padding:8px 0;font-size:13px">👑 fithyp@gmail.com</div>
-  </div>
-</div>
-</div>
-
 <!-- USER MODAL -->
 <div id="userModal" class="modal-bg" style="display:none" onclick="if(event.target===this)this.style.display='none'"><div class="modal" id="userModalContent"></div></div>
 </div></div>
@@ -255,7 +223,7 @@ $('LP').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 function $(id){return document.getElementById(id);}
 
 // NAV
-document.querySelectorAll('.ni').forEach(n=>{n.onclick=()=>{document.querySelectorAll('.page').forEach(p=>p.style.display='none');const pg=$('page-'+n.dataset.page);pg.style.display=['dashboard','map','stats'].includes(n.dataset.page)?'flex':'';document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));n.classList.add('active');if(n.dataset.page==='map')setTimeout(()=>map&&map.invalidateSize(),200);if(n.dataset.page==='stats')rStats();if(n.dataset.page==='regions')rRegions();if(n.dataset.page==='config')loadCfgSupport();};});
+document.querySelectorAll('.ni').forEach(n=>{n.onclick=()=>{document.querySelectorAll('.page').forEach(p=>p.style.display='none');const pg=$('page-'+n.dataset.page);pg.style.display=['dashboard','map','stats'].includes(n.dataset.page)?'flex':'';document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));n.classList.add('active');if(n.dataset.page==='map')setTimeout(()=>map&&map.invalidateSize(),200);if(n.dataset.page==='stats')rStats();if(n.dataset.page==='regions')rRegions();};});
 
 // DATA
 async function loadAll(){await Promise.all([lL(),lU(),lR()]);rDash();rMap();rList();rUsers();rRep();rPets();populateHoodFilter();}
@@ -397,7 +365,7 @@ function uMap(){
       const ph2=l.photos?.length?`<img src="${l.photos[0]}" style="width:100%;height:65px;object-fit:cover;border-radius:4px;margin-bottom:3px">`:'';
       const uPhone=(UA.find(x=>x.id===l.user_id))?.phone||l.phone||'';
       const phoneLink=uPhone?`<br><a href="https://api.whatsapp.com/send?phone=${String(uPhone).replace(/\D/g,'')}" target="_blank" style="color:#25D366;font-size:10px;text-decoration:none;font-weight:700">💬 ${fP(uPhone)}</a>`:'<br><span style="color:#F44;font-size:9px">⚠️ Sem WhatsApp</span>';
-      const popup=`<div style="font-family:DM Sans,sans-serif;min-width:150px">${ph2}<strong style="font-size:11px">${l.title}</strong><br><span style="color:${color};font-weight:700;font-size:10px">${l.price>0?'R$'+l.price:'Grátis'}</span> <span style="font-size:8px;color:#888">${cN(l.category)}</span><br><span style="color:#888;font-size:9px">📍${l.neighborhood||'-'} · ${tA(l.created_at)} · 👤${gN(l.user_id)}</span>${phoneLink}<br><button onclick="remL('${l.id}')" style="margin-top:5px;padding:3px 8px;border-radius:4px;border:1px solid #FF6B6B;background:transparent;color:#FF6B6B;font-size:9px;cursor:pointer;font-family:inherit">🗑️ Excluir</button></div>`;
+      const popup=`<div style="font-family:DM Sans,sans-serif;min-width:150px">${ph2}<strong style="font-size:11px">${l.title}</strong><br><span style="color:${color};font-weight:700;font-size:10px">${l.price>0?'R$'+l.price:'Grátis'}</span> <span style="font-size:8px;color:#888">${cN(l.category)}</span><br><span style="color:#888;font-size:9px">📍${l.neighborhood||'-'} · ${tA(l.created_at)} · 👤${gN(l.user_id)}</span>${phoneLink}<br><button onclick="remL('${l.id}')" style="margin-top:5px;padding:3px 8px;border-radius:4px;border:1px solid #FFB347;background:transparent;color:#FFB347;font-size:9px;cursor:pointer;font-family:inherit">🚫 Bloquear</button> <button onclick="remL('${l.id}')" style="margin-top:5px;padding:3px 8px;border-radius:4px;border:1px solid #FF6B6B;background:transparent;color:#FF6B6B;font-size:9px;cursor:pointer;font-family:inherit">🗑️ Deletar</button></div>`;
       const m=L.marker([Number(l.latitude),Number(l.longitude)],{icon}).addTo(map).bindPopup(popup);m._lid=l.id;mkrs.push(m);
     });
   }
@@ -436,9 +404,10 @@ function rLT(){
   if(cat)i=i.filter(l=>l.category===cat);
   if(lSrch)i=i.filter(l=>l.title.toLowerCase().includes(lSrch)||(l.description||'').toLowerCase().includes(lSrch));
   $('LT').innerHTML=i.map(l=>{const dl=daysLeft(l.expires_at);const expTxt=dl!==null?(dl<=0?'<span style="color:var(--acc)">Expirado</span>':dl<=7?`<span style="color:var(--warn)">${dl}d</span>`:dl+'d'):'-';
-  return`<tr><td>${pT(l)}</td><td style="font-weight:600;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.title}</td><td><span class="bg bg-${l.type}">${tN(l.type)}</span></td><td>${l.price>0?'R$'+l.price:'-'}</td><td style="color:var(--txt2)">${cN(l.category)}</td><td style="color:var(--txt2)">${l.neighborhood||'-'}</td><td style="color:var(--txt2)">${tA(l.created_at)}</td><td>${expTxt}</td><td><span class="bg bg-${l.status}">${l.status}</span></td><td style="color:var(--txt2);font-size:9px;cursor:pointer" onclick="showUser('${l.user_id}')">${gN(l.user_id)}</td><td><button class="bs dg" onclick="remL('${l.id}')">🗑️</button></td></tr>`;}).join('');
+  return`<tr><td>${pT(l)}</td><td style="font-weight:600;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.title}</td><td><span class="bg bg-${l.type}">${tN(l.type)}</span></td><td>${l.price>0?'R$'+l.price:'-'}</td><td style="color:var(--txt2)">${cN(l.category)}</td><td style="color:var(--txt2)">${l.neighborhood||'-'}</td><td style="color:var(--txt2)">${tA(l.created_at)}</td><td>${expTxt}</td><td><span class="bg bg-${l.status}">${l.status}</span></td><td style="color:var(--txt2);font-size:9px;cursor:pointer" onclick="showUser('${l.user_id}')">${gN(l.user_id)}</td><td><button class="bs" onclick="blockL('${l.id}')" title="Bloquear">🚫</button><button class="bs dg" onclick="remL('${l.id}')" title="Deletar">🗑️</button></td></tr>`;}).join('');
 }
-async function remL(id){if(!confirm('Remover?'))return;await sb.from('listings').update({status:'blocked'}).eq('id',id);await lL();rList();rDash();uMap();}
+async function remL(id){if(!confirm('Deletar permanentemente?'))return;await sb.from('listings').delete().eq('id',id);await lL();rList();rDash();uMap();}
+async function blockL(id){if(!confirm('Bloquear anúncio?'))return;await sb.from('listings').update({status:'blocked'}).eq('id',id);await lL();rList();rDash();uMap();}
 
 // USERS
 let uSrch='';
@@ -471,25 +440,6 @@ async function dR(id){await sb.from('reports').delete().eq('id',id);await lR();r
 
 // PETS
 function rPets(){const pets=LA.filter(l=>l.type==='lost_pet');$('PT').innerHTML=pets.map(l=>{const u=UA.find(x=>x.id===l.user_id);const p=u?.phone||l.phone||'-';return`<tr><td>${l.photos?.length?`<img src="${l.photos[0]}" style="width:40px;height:40px;border-radius:6px;object-fit:cover">`:'🐾'}</td><td style="font-weight:600">${l.title}</td><td style="color:var(--txt2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.description||'-'}</td><td style="color:var(--txt2)">${l.neighborhood||'-'}</td><td style="color:var(--txt2)">${tA(l.created_at)}</td><td>${fP(p)}</td><td><button class="bs" onclick="window.open('https://api.whatsapp.com/send?phone=${String(p).replace(/\D/g,'')}','_blank')">💬</button></td></tr>`;}).join('');}
-
-async function loadCfgSupport(){
-  try{
-    const {data}=await sb.from('settings').select('value').eq('key','support_whatsapp').single();
-    if(data?.value)document.getElementById('cfgSupportPhone').value=data.value;
-  }catch(e){}
-}
-async function saveCfgSupport(){
-  const phone=document.getElementById('cfgSupportPhone').value.replace(/\D/g,'');
-  const msg=document.getElementById('cfgSupportMsg');
-  if(phone.length<10){msg.style.color='var(--acc)';msg.textContent='⚠️ Número inválido';return;}
-  try{
-    const {error}=await sb.from('settings').upsert({key:'support_whatsapp',value:phone});
-    if(error)throw error;
-    msg.style.color='var(--pri)';msg.textContent='✅ Salvo!';
-    document.getElementById('cfgSupportPhone').value=phone;
-  }catch(e){msg.style.color='var(--acc)';msg.textContent='❌ Erro: '+e.message;}
-  setTimeout(()=>msg.textContent='',4000);
-}
 </script>
 </body>
 </html>
