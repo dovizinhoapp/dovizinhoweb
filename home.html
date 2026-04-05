@@ -3,252 +3,629 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Do Vizinho — Compre, venda e doe no seu bairro</title>
-<meta name="description" content="Marketplace hiperlocal gratuito. Compre, venda e doe produtos com vizinhos a até 5km de você.">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>Do Vizinho — Buy, sell & donate in your neighborhood</title>
+<meta name="description" content="The hyperlocal marketplace app. Buy, sell, donate and find pets in your neighborhood. Free, direct via WhatsApp, no fees.">
+<link rel="icon" href="/assets/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'DM Sans',sans-serif;background:#fff;color:#1a1a2e;overflow-x:hidden;}
+:root {
+  --navy: #1B2340;
+  --navy2: #242d4e;
+  --green: #3EE07F;
+  --green2: #2DB67D;
+  --white: #ffffff;
+  --gray: #f4f6fa;
+  --gray2: #e8ecf5;
+  --txt: #1B2340;
+  --muted: #6b7a99;
+  --radius: 20px;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family:'Inter', sans-serif; background:#fff; color:var(--txt); overflow-x:hidden; }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 48px;
+  background:rgba(27,35,64,0.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.nav-logo img { width:36px; height:36px; border-radius:10px; }
+.nav-logo span { font-family:'Sora',sans-serif; font-weight:800; font-size:20px; color:#fff; }
+.nav-cta {
+  display:flex; gap:10px; align-items:center;
+}
+.nav-btn {
+  padding:10px 20px; border-radius:100px; font-size:14px; font-weight:600;
+  text-decoration:none; font-family:'Inter',sans-serif; cursor:pointer; border:none;
+  transition:all 0.2s;
+}
+.nav-btn.outline { background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.3); }
+.nav-btn.outline:hover { border-color:var(--green); color:var(--green); }
+.nav-btn.solid { background:var(--green); color:var(--navy); }
+.nav-btn.solid:hover { background:#fff; }
 
 /* HERO */
-.hero{background:linear-gradient(135deg,#0f1f12 0%,#1a3a20 50%,#0d2b14 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,rgba(45,182,125,0.15) 0%,transparent 70%);}
-.hero-logo{width:96px;height:96px;border-radius:24px;box-shadow:0 8px 32px rgba(0,0,0,0.4);margin-bottom:24px;position:relative;}
-.hero h1{font-size:clamp(36px,6vw,64px);font-weight:900;color:#fff;line-height:1.1;margin-bottom:16px;position:relative;}
-.hero h1 span{color:#2DB67D;}
-.hero p{font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,0.7);max-width:520px;line-height:1.6;margin-bottom:40px;position:relative;}
-.stores{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;position:relative;}
-.store-btn{display:flex;align-items:center;gap:12px;padding:14px 24px;border-radius:16px;text-decoration:none;font-family:'DM Sans',sans-serif;transition:transform 0.2s,box-shadow 0.2s;min-width:180px;}
-.store-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
-.store-btn.google{background:#fff;color:#1a1a2e;}
-.store-btn.apple{background:#1a1a2e;color:#fff;border:1px solid rgba(255,255,255,0.2);}
-.store-icon{font-size:28px;line-height:1;}
-.store-text small{display:block;font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:0.5px;font-weight:600;}
-.store-text strong{display:block;font-size:16px;font-weight:800;}
-.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(45,182,125,0.15);border:1px solid rgba(45,182,125,0.3);color:#2DB67D;padding:6px 14px;border-radius:100px;font-size:13px;font-weight:600;margin-bottom:24px;}
+.hero {
+  background:var(--navy);
+  min-height:100vh;
+  padding:120px 48px 80px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+  max-width:1200px;
+  margin:0 auto;
+  position:relative;
+}
+.hero-left {}
+.hero-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(62,224,127,0.12); border:1px solid rgba(62,224,127,0.3);
+  color:var(--green); padding:6px 14px; border-radius:100px;
+  font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px;
+  margin-bottom:28px;
+}
+.hero h1 {
+  font-family:'Sora',sans-serif;
+  font-size:clamp(40px,4.5vw,64px);
+  font-weight:900;
+  color:#fff;
+  line-height:1.08;
+  margin-bottom:20px;
+}
+.hero h1 .accent { color:var(--green); }
+.hero-sub {
+  font-size:18px; color:rgba(255,255,255,0.65); line-height:1.7;
+  margin-bottom:40px; max-width:480px;
+}
+.hero-stores { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:48px; }
+.store-pill {
+  display:flex; align-items:center; gap:10px;
+  padding:12px 20px; border-radius:14px; text-decoration:none;
+  font-family:'Inter',sans-serif; transition:transform 0.2s,box-shadow 0.2s;
+  min-width:160px;
+}
+.store-pill:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+.store-pill.gplay { background:#fff; color:var(--navy); }
+.store-pill.astore { background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.2); }
+.store-pill .sico { font-size:22px; }
+.store-pill .stxt small { display:block; font-size:9px; opacity:0.55; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; }
+.store-pill .stxt strong { display:block; font-size:15px; font-weight:800; }
+.hero-stats { display:flex; gap:32px; }
+.stat { }
+.stat-num { font-family:'Sora',sans-serif; font-size:28px; font-weight:900; color:var(--green); }
+.stat-lbl { font-size:12px; color:rgba(255,255,255,0.4); margin-top:2px; font-weight:500; }
+
+/* phone mockup */
+.hero-right {
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.phone-wrap {
+  position:relative;
+  width:280px;
+}
+.phone-frame {
+  width:280px;
+  border-radius:42px;
+  border:8px solid rgba(255,255,255,0.12);
+  box-shadow:0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+  overflow:hidden;
+  background:#fff;
+  position:relative;
+  z-index:2;
+}
+.phone-frame img { width:100%; display:block; }
+.phone-glow {
+  position:absolute;
+  width:300px; height:300px;
+  background:radial-gradient(circle, rgba(62,224,127,0.25) 0%, transparent 70%);
+  border-radius:50%;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  z-index:1;
+  filter:blur(30px);
+}
+.phone2 {
+  position:absolute;
+  width:220px;
+  border-radius:34px;
+  border:6px solid rgba(255,255,255,0.08);
+  box-shadow:0 24px 48px rgba(0,0,0,0.5);
+  overflow:hidden;
+  right:-60px;
+  top:60px;
+  z-index:3;
+}
+.phone2 img { width:100%; display:block; }
+
+/* WAVE DIVIDER */
+.wave { background:var(--navy); }
+.wave svg { display:block; }
 
 /* FEATURES */
-.section{padding:80px 24px;max-width:1100px;margin:0 auto;}
-.section-title{font-size:clamp(28px,4vw,42px);font-weight:900;text-align:center;margin-bottom:12px;color:#1a1a2e;}
-.section-sub{font-size:16px;color:#666;text-align:center;margin-bottom:56px;max-width:500px;margin-left:auto;margin-right:auto;}
-.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;}
-.feature-card{background:#f8faf9;border-radius:20px;padding:32px;border:1px solid #e8f5ee;transition:transform 0.2s,box-shadow 0.2s;}
-.feature-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(45,182,125,0.1);}
-.feature-icon{font-size:40px;margin-bottom:16px;}
-.feature-card h3{font-size:18px;font-weight:800;margin-bottom:8px;color:#1a1a2e;}
-.feature-card p{font-size:14px;color:#666;line-height:1.6;}
+.features-section {
+  padding:100px 48px;
+  max-width:1200px;
+  margin:0 auto;
+}
+.section-eyebrow {
+  font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:2px;
+  color:var(--green2); margin-bottom:12px;
+}
+.section-title {
+  font-family:'Sora',sans-serif;
+  font-size:clamp(28px,3.5vw,44px);
+  font-weight:900;
+  color:var(--navy);
+  margin-bottom:16px;
+  line-height:1.15;
+}
+.section-sub { font-size:17px; color:var(--muted); max-width:520px; line-height:1.7; margin-bottom:56px; }
 
-/* HOW IT WORKS */
-.how{background:#f8faf9;padding:80px 24px;}
-.how-inner{max-width:900px;margin:0 auto;}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px;margin-top:48px;}
-.step{text-align:center;}
-.step-num{width:56px;height:56px;border-radius:50%;background:#2DB67D;color:#fff;font-size:22px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
-.step h3{font-size:16px;font-weight:800;margin-bottom:8px;}
-.step p{font-size:14px;color:#666;line-height:1.5;}
+.features-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+.feat {
+  background:var(--gray);
+  border-radius:var(--radius);
+  padding:32px;
+  border:1px solid var(--gray2);
+  transition:transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  position:relative;
+  overflow:hidden;
+}
+.feat::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:3px;
+  background:linear-gradient(90deg, var(--green), var(--green2));
+  opacity:0;
+  transition:opacity 0.25s;
+}
+.feat:hover { transform:translateY(-6px); box-shadow:0 20px 48px rgba(27,35,64,0.1); border-color:var(--green); }
+.feat:hover::before { opacity:1; }
+.feat-icon { font-size:36px; margin-bottom:16px; display:block; }
+.feat h3 { font-family:'Sora',sans-serif; font-size:17px; font-weight:800; margin-bottom:8px; color:var(--navy); }
+.feat p { font-size:14px; color:var(--muted); line-height:1.65; }
+
+/* SCREEN SHOWCASE */
+.showcase {
+  background:var(--navy);
+  padding:100px 48px;
+  overflow:hidden;
+}
+.showcase-inner { max-width:1200px; margin:0 auto; }
+.showcase-inner .section-title { color:#fff; }
+.showcase-inner .section-sub { color:rgba(255,255,255,0.5); }
+.showcase-inner .section-eyebrow { color:var(--green); }
+
+.screens-row {
+  display:flex;
+  gap:24px;
+  align-items:flex-end;
+  margin-top:56px;
+  overflow-x:auto;
+  padding-bottom:16px;
+  scrollbar-width:none;
+}
+.screens-row::-webkit-scrollbar { display:none; }
+.screen-item {
+  flex-shrink:0;
+  width:220px;
+}
+.screen-item .screen-phone {
+  width:100%;
+  border-radius:28px;
+  border:5px solid rgba(255,255,255,0.1);
+  box-shadow:0 24px 48px rgba(0,0,0,0.5);
+  overflow:hidden;
+  transition:transform 0.3s;
+}
+.screen-item:hover .screen-phone { transform:translateY(-8px); }
+.screen-item img { width:100%; display:block; }
+.screen-label { font-size:13px; font-weight:600; color:rgba(255,255,255,0.5); margin-top:14px; text-align:center; }
 
 /* PLANS */
-.plans-section{padding:80px 24px;max-width:1000px;margin:0 auto;}
-.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:48px;}
-.plan-card{border-radius:20px;padding:32px;border:2px solid #e8e8e8;position:relative;}
-.plan-card.pro{border-color:#FFD166;background:linear-gradient(135deg,#fffdf0,#fff9e0);}
-.plan-card.loja{border-color:#8B5CF6;background:linear-gradient(135deg,#faf8ff,#f5f0ff);}
-.plan-badge{display:inline-block;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:16px;}
-.plan-badge.free{background:#e8f5ee;color:#2DB67D;}
-.plan-badge.pro{background:#fff3cc;color:#b37700;}
-.plan-badge.loja{background:#ede9fe;color:#7c3aed;}
-.plan-price{font-size:32px;font-weight:900;margin-bottom:4px;}
-.plan-price span{font-size:14px;font-weight:500;color:#999;}
-.plan-desc{font-size:13px;color:#666;margin-bottom:20px;}
-.plan-features{list-style:none;}
-.plan-features li{font-size:13px;color:#444;padding:5px 0;display:flex;align-items:center;gap:8px;}
-.plan-features li::before{content:'✓';color:#2DB67D;font-weight:800;}
+.plans-section {
+  padding:100px 48px;
+  max-width:1200px;
+  margin:0 auto;
+}
+.plans-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  margin-top:56px;
+}
+.plan {
+  border-radius:var(--radius);
+  padding:36px;
+  border:2px solid var(--gray2);
+  position:relative;
+  overflow:hidden;
+  transition:transform 0.25s, box-shadow 0.25s;
+}
+.plan:hover { transform:translateY(-4px); box-shadow:0 20px 48px rgba(27,35,64,0.1); }
+.plan.featured {
+  background:var(--navy);
+  border-color:var(--green);
+  color:#fff;
+}
+.plan.featured::before {
+  content:'MAIS POPULAR';
+  position:absolute; top:20px; right:20px;
+  background:var(--green); color:var(--navy);
+  font-size:9px; font-weight:900; letter-spacing:1.5px;
+  padding:4px 10px; border-radius:100px;
+}
+.plan-name { font-family:'Sora',sans-serif; font-size:20px; font-weight:800; margin-bottom:4px; }
+.plan.featured .plan-name { color:#fff; }
+.plan-tagline { font-size:13px; color:var(--muted); margin-bottom:24px; }
+.plan.featured .plan-tagline { color:rgba(255,255,255,0.5); }
+.plan-price { font-family:'Sora',sans-serif; font-size:42px; font-weight:900; margin-bottom:4px; }
+.plan.featured .plan-price { color:var(--green); }
+.plan-price sub { font-size:16px; font-weight:500; color:var(--muted); }
+.plan.featured .plan-price sub { color:rgba(255,255,255,0.4); }
+.plan-period { font-size:12px; color:var(--muted); margin-bottom:28px; }
+.plan.featured .plan-period { color:rgba(255,255,255,0.4); }
+.plan-divider { height:1px; background:var(--gray2); margin-bottom:24px; }
+.plan.featured .plan-divider { background:rgba(255,255,255,0.1); }
+.plan-feature { display:flex; align-items:center; gap:10px; font-size:14px; margin-bottom:12px; color:var(--txt); }
+.plan.featured .plan-feature { color:rgba(255,255,255,0.85); }
+.plan-feature .check { color:var(--green); font-size:16px; font-weight:900; flex-shrink:0; }
+.plan-btn {
+  display:block; width:100%; padding:14px; border-radius:12px;
+  font-family:'Inter',sans-serif; font-size:15px; font-weight:700;
+  text-align:center; text-decoration:none; margin-top:28px;
+  transition:all 0.2s; cursor:pointer; border:none;
+}
+.plan-btn.outline { background:transparent; color:var(--navy); border:2px solid var(--navy); }
+.plan-btn.outline:hover { background:var(--navy); color:#fff; }
+.plan-btn.fill { background:var(--green); color:var(--navy); }
+.plan-btn.fill:hover { background:#fff; }
 
-/* CTA */
-.cta{background:linear-gradient(135deg,#0f1f12,#1a3a20);padding:80px 24px;text-align:center;}
-.cta h2{font-size:clamp(28px,4vw,42px);font-weight:900;color:#fff;margin-bottom:16px;}
-.cta p{font-size:16px;color:rgba(255,255,255,0.7);margin-bottom:40px;}
+/* HOW */
+.how-section {
+  background:var(--gray);
+  padding:100px 48px;
+}
+.how-inner { max-width:1200px; margin:0 auto; }
+.steps-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:32px;
+  margin-top:56px;
+  position:relative;
+}
+.steps-grid::before {
+  content:'';
+  position:absolute;
+  top:28px; left:14%; right:14%;
+  height:2px;
+  background:linear-gradient(90deg, var(--green), var(--green2));
+  opacity:0.3;
+}
+.step { text-align:center; position:relative; }
+.step-circle {
+  width:56px; height:56px; border-radius:50%;
+  background:var(--navy); color:var(--green);
+  font-family:'Sora',sans-serif; font-size:20px; font-weight:900;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 20px;
+  border:3px solid var(--green);
+  position:relative; z-index:1;
+}
+.step h3 { font-family:'Sora',sans-serif; font-size:15px; font-weight:800; margin-bottom:8px; }
+.step p { font-size:13px; color:var(--muted); line-height:1.6; }
+
+/* CTA FINAL */
+.cta-final {
+  background:var(--navy);
+  padding:120px 48px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.cta-final::before {
+  content:'';
+  position:absolute;
+  width:600px; height:600px;
+  background:radial-gradient(circle, rgba(62,224,127,0.12) 0%, transparent 70%);
+  border-radius:50%;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+}
+.cta-final h2 {
+  font-family:'Sora',sans-serif;
+  font-size:clamp(32px,4vw,56px);
+  font-weight:900;
+  color:#fff;
+  margin-bottom:16px;
+  position:relative;
+}
+.cta-final h2 span { color:var(--green); }
+.cta-final p { font-size:18px; color:rgba(255,255,255,0.55); margin-bottom:48px; position:relative; }
+.cta-stores { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; position:relative; }
 
 /* FOOTER */
-footer{background:#0a0e0b;padding:32px 24px;text-align:center;}
-.footer-links{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
-.footer-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px;}
-.footer-links a:hover{color:#2DB67D;}
-footer p{color:rgba(255,255,255,0.3);font-size:12px;}
+footer {
+  background:#111827;
+  padding:48px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:20px;
+}
+.footer-logo { display:flex; align-items:center; gap:10px; }
+.footer-logo img { width:32px; height:32px; border-radius:8px; }
+.footer-logo span { font-family:'Sora',sans-serif; font-weight:800; color:#fff; font-size:16px; }
+.footer-links { display:flex; gap:24px; flex-wrap:wrap; }
+.footer-links a { font-size:13px; color:rgba(255,255,255,0.4); text-decoration:none; }
+.footer-links a:hover { color:var(--green); }
+footer p { font-size:12px; color:rgba(255,255,255,0.2); }
 
-@media(max-width:600px){
-  .stores{flex-direction:column;align-items:center;}
-  .store-btn{width:100%;max-width:280px;justify-content:center;}
+/* RESPONSIVE */
+@media(max-width:900px) {
+  nav { padding:16px 24px; }
+  .hero { grid-template-columns:1fr; padding:100px 24px 64px; gap:48px; }
+  .hero-right { display:none; }
+  .features-section, .plans-section, .showcase { padding:72px 24px; }
+  .features-grid { grid-template-columns:1fr 1fr; }
+  .plans-grid { grid-template-columns:1fr; }
+  .steps-grid { grid-template-columns:1fr 1fr; }
+  .steps-grid::before { display:none; }
+  .how-section { padding:72px 24px; }
+  .cta-final { padding:80px 24px; }
+  footer { padding:32px 24px; flex-direction:column; align-items:flex-start; }
+}
+@media(max-width:600px) {
+  .features-grid { grid-template-columns:1fr; }
+  .steps-grid { grid-template-columns:1fr; }
+  .nav-cta .nav-btn.outline { display:none; }
 }
 </style>
 </head>
 <body>
 
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="/assets/icon.png" alt="Do Vizinho">
+    <span>Do Vizinho</span>
+  </a>
+  <div class="nav-cta">
+    <a href="https://play.google.com/store/apps/details?id=com.vizinhovendedoa.app" class="nav-btn outline" target="_blank">Google Play</a>
+    <a href="https://apps.apple.com/us/app/do-vizinho/id6760084153" class="nav-btn solid" target="_blank">App Store</a>
+  </div>
+</nav>
+
 <!-- HERO -->
-<section class="hero">
-  <div class="badge">🇧🇷 Feito para o Brasil</div>
-  <img src="/assets/icon.png" alt="Do Vizinho" class="hero-logo">
-  <h1>O mercado do<br><span>seu bairro</span></h1>
-  <p>Compre, venda e doe com vizinhos a até 5km de você. Grátis, direto pelo WhatsApp, sem taxas.</p>
-  <div class="stores">
-    <a href="https://play.google.com/store/apps/details?id=com.vizinhovendedoa.app" class="store-btn google" target="_blank">
-      <span class="store-icon">▶</span>
-      <div class="store-text">
-        <small>Disponível no</small>
-        <strong>Google Play</strong>
+<div style="background:var(--navy)">
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">🏘️ Hyperlocal Marketplace</div>
+    <h1>Buy, sell &<br><span class="accent">donate</span><br>in your block.</h1>
+    <p class="hero-sub">The simplest way to buy, sell, donate, find lost pets and discover deals from your neighbors. Free, direct via WhatsApp, no fees.</p>
+    <div class="hero-stores">
+      <a href="https://play.google.com/store/apps/details?id=com.vizinhovendedoa.app" class="store-pill gplay" target="_blank">
+        <span class="sico">▶</span>
+        <div class="stxt"><small>Get it on</small><strong>Google Play</strong></div>
+      </a>
+      <a href="https://apps.apple.com/us/app/do-vizinho/id6760084153" class="store-pill astore" target="_blank">
+        <span class="sico"></span>
+        <div class="stxt"><small>Download on the</small><strong>App Store</strong></div>
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-lbl">Free to start</div>
       </div>
+      <div class="stat">
+        <div class="stat-num">0%</div>
+        <div class="stat-lbl">Commission</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5km</div>
+        <div class="stat-lbl">Max radius</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="phone-wrap">
+      <div class="phone-glow"></div>
+      <div class="phone-frame">
+        <img src="/assets/screens/feed.jpg" alt="Do Vizinho Feed">
+      </div>
+      <div class="phone2">
+        <img src="/assets/screens/map.jpg" alt="Do Vizinho Map">
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <p class="section-eyebrow">Why Do Vizinho</p>
+  <h2 class="section-title">Everything your<br>neighborhood needs</h2>
+  <p class="section-sub">Simple, fast and completely free to start. No intermediaries, no hidden fees.</p>
+  <div class="features-grid">
+    <div class="feat">
+      <span class="feat-icon">📍</span>
+      <h3>Hyperlocal</h3>
+      <p>See only ads near you. Filter from 500m to 5km. Find your neighbor's stuff in seconds.</p>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">💬</span>
+      <h3>Direct via WhatsApp</h3>
+      <p>Contact sellers directly on WhatsApp. No middleman, no platform messaging, just real people.</p>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">🎁</span>
+      <h3>Give & Receive</h3>
+      <p>Donate items you no longer need. Receive free things from your community.</p>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">🗺️</span>
+      <h3>Neighborhood Map</h3>
+      <p>See all listings on a live map. Spot exactly where items are and how far from you.</p>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">🐾</span>
+      <h3>Lost Pets</h3>
+      <p>Post lost or found pets in your area. Help reunite animals with their families.</p>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">🛡️</span>
+      <h3>Safe Trading</h3>
+      <p>Built-in safety warnings, anti-scam alerts and community reporting system.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENSHOTS -->
+<section class="showcase">
+  <div class="showcase-inner">
+    <p class="section-eyebrow">The App</p>
+    <h2 class="section-title" style="color:#fff">See it in action</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.5)">Clean, fast and intuitive. Everything you need, nothing you don't.</p>
+    <div class="screens-row">
+      <div class="screen-item">
+        <div class="screen-phone">
+          <img src="/assets/screens/feed.jpg" alt="Feed">
+        </div>
+        <div class="screen-label">Browse nearby listings</div>
+      </div>
+      <div class="screen-item" style="margin-bottom:40px">
+        <div class="screen-phone">
+          <img src="/assets/screens/map.jpg" alt="Map">
+        </div>
+        <div class="screen-label">Neighborhood map</div>
+      </div>
+      <div class="screen-item">
+        <div class="screen-phone">
+          <img src="/assets/screens/publish.jpg" alt="Publish">
+        </div>
+        <div class="screen-label">Publish in seconds</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-inner">
+    <p class="section-eyebrow">Getting started</p>
+    <h2 class="section-title">Up and running<br>in 2 minutes</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-circle">1</div>
+        <h3>Download the app</h3>
+        <p>Available on Google Play and App Store. Free download, no credit card.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">2</div>
+        <h3>Create your account</h3>
+        <p>Sign up with email. Add your WhatsApp to enable contact with buyers.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">3</div>
+        <h3>Post your listing</h3>
+        <p>Take a photo, set a price (or free), choose a category. Done.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">4</div>
+        <h3>Sell to your neighbor</h3>
+        <p>Buyers contact you on WhatsApp directly. Meet up and close the deal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans-section">
+  <p class="section-eyebrow">Pricing</p>
+  <h2 class="section-title">Start free.<br>Scale when you need.</h2>
+  <p class="section-sub">Perfect for individuals and local businesses alike.</p>
+  <div class="plans-grid">
+    <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-tagline">For casual users</div>
+      <div class="plan-price">R$ 0<sub>/mo</sub></div>
+      <div class="plan-period">Forever free</div>
+      <div class="plan-divider"></div>
+      <div class="plan-feature"><span class="check">✓</span> Up to 10 active listings</div>
+      <div class="plan-feature"><span class="check">✓</span> 1 photo per listing</div>
+      <div class="plan-feature"><span class="check">✓</span> Map view</div>
+      <div class="plan-feature"><span class="check">✓</span> WhatsApp contact</div>
+      <a href="https://play.google.com/store/apps/details?id=com.vizinhovendedoa.app" class="plan-btn outline" target="_blank">Get started free</a>
+    </div>
+    <div class="plan featured">
+      <div class="plan-name">Pro</div>
+      <div class="plan-tagline">For active sellers</div>
+      <div class="plan-price">R$ 4,90<sub>/mo</sub></div>
+      <div class="plan-period">Billed monthly</div>
+      <div class="plan-divider"></div>
+      <div class="plan-feature"><span class="check">✓</span> Up to 30 active listings</div>
+      <div class="plan-feature"><span class="check">✓</span> 3 photos per listing</div>
+      <div class="plan-feature"><span class="check">✓</span> ⭐ Pro badge on profile</div>
+      <div class="plan-feature"><span class="check">✓</span> WhatsApp support</div>
+      <a href="https://play.google.com/store/apps/details?id=com.vizinhovendedoa.app" class="plan-btn fill" target="_blank">Go Pro</a>
+    </div>
+    <div class="plan">
+      <div class="plan-name">🏪 Store</div>
+      <div class="plan-tagline">For local businesses</div>
+      <div class="plan-price">R$ 29,90<sub>/mo</sub></div>
+      <div class="plan-period">Billed monthly</div>
+      <div class="plan-divider"></div>
+      <div class="plan-feature"><span class="check">✓</span> Up to 200 active listings</div>
+      <div class="plan-feature"><span class="check">✓</span> 5 photos per listing</div>
+      <div class="plan-feature"><span class="check">✓</span> Store name on all listings</div>
+      <div class="plan-feature"><span class="check">✓</span> 🏪 Store badge in feed</div>
+      <div class="plan-feature"><span class="check">✓</span> Priority support</div>
+      <a href="https://play.google.com/store/apps/details?id=com.vizinhovendedoa.app" class="plan-btn outline" target="_blank">Open your store</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>Your neighborhood<br>is <span>waiting.</span></h2>
+  <p>Download free. No credit card. Start selling in minutes.</p>
+  <div class="cta-stores">
+    <a href="https://play.google.com/store/apps/details?id=com.vizinhovendedoa.app" class="store-pill gplay" target="_blank">
+      <span class="sico">▶</span>
+      <div class="stxt"><small>Get it on</small><strong>Google Play</strong></div>
     </a>
-    <a href="https://apps.apple.com/us/app/do-vizinho/id6760084153" class="store-btn apple" target="_blank">
-      <span class="store-icon"></span>
-      <div class="store-text">
-        <small>Disponível na</small>
-        <strong>App Store</strong>
-      </div>
+    <a href="https://apps.apple.com/us/app/do-vizinho/id6760084153" class="store-pill astore" target="_blank">
+      <span class="sico"></span>
+      <div class="stxt"><small>Download on the</small><strong>App Store</strong></div>
     </a>
   </div>
 </section>
 
-<!-- FEATURES -->
-<div class="section">
-  <h2 class="section-title">Tudo que você precisa no bairro</h2>
-  <p class="section-sub">Simples, rápido e completamente gratuito para começar</p>
-  <div class="features">
-    <div class="feature-card">
-      <div class="feature-icon">📍</div>
-      <h3>Hiperlocal</h3>
-      <p>Veja apenas anúncios próximos a você. Filtre de 500m até 5km do seu endereço.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">💬</div>
-      <h3>Contato direto</h3>
-      <p>Fale pelo WhatsApp direto com o anunciante. Sem intermediários, sem taxas.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🎁</div>
-      <h3>Doe e receba</h3>
-      <p>Dê uma nova vida aos seus objetos. Doe para quem precisa no bairro.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🐾</div>
-      <h3>Pets perdidos</h3>
-      <p>Ajude a encontrar animais perdidos ou encontrados na sua região.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🗺️</div>
-      <h3>Mapa do bairro</h3>
-      <p>Veja os anúncios no mapa e encontre o que procura perto de você.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🛡️</div>
-      <h3>Seguro</h3>
-      <p>Sistema anti-golpe integrado com avisos e denúncias de usuários.</p>
-    </div>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<div class="how">
-  <div class="how-inner">
-    <h2 class="section-title">Como funciona</h2>
-    <p class="section-sub">Em menos de 2 minutos você já está anunciando</p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Cadastre-se grátis</h3>
-        <p>Crie sua conta com e-mail e senha. Rápido e sem complicação.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Publique seu anúncio</h3>
-        <p>Tire uma foto, descreva o produto e defina o preço ou doe de graça.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Converse pelo WhatsApp</h3>
-        <p>Compradores entram em contato direto com você pelo WhatsApp.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <h3>Negocie e venda</h3>
-        <p>Combine a entrega com seu vizinho e pronto. Sem taxas, sem comissão.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PLANS -->
-<div class="plans-section">
-  <h2 class="section-title">Planos para todos</h2>
-  <p class="section-sub">Comece grátis e expanda quando precisar</p>
-  <div class="plans">
-    <div class="plan-card">
-      <span class="plan-badge free">Grátis</span>
-      <div class="plan-price">R$ 0<span>/mês</span></div>
-      <p class="plan-desc">Para quem quer começar</p>
-      <ul class="plan-features">
-        <li>Até 10 anúncios ativos</li>
-        <li>1 foto por anúncio</li>
-        <li>Acesso ao mapa</li>
-        <li>Contato via WhatsApp</li>
-      </ul>
-    </div>
-    <div class="plan-card pro">
-      <span class="plan-badge pro">⭐ Pro</span>
-      <div class="plan-price">R$ 4,90<span>/mês</span></div>
-      <p class="plan-desc">Para quem vende com frequência</p>
-      <ul class="plan-features">
-        <li>Até 30 anúncios ativos</li>
-        <li>3 fotos por anúncio</li>
-        <li>Badge Pro no perfil</li>
-        <li>Suporte via WhatsApp</li>
-      </ul>
-    </div>
-    <div class="plan-card loja">
-      <span class="plan-badge loja">🏪 Loja</span>
-      <div class="plan-price">R$ 29,90<span>/mês</span></div>
-      <p class="plan-desc">Para negócios locais</p>
-      <ul class="plan-features">
-        <li>Até 200 anúncios ativos</li>
-        <li>5 fotos por anúncio</li>
-        <li>Nome da loja em destaque</li>
-        <li>Badge Loja no feed</li>
-        <li>Suporte prioritário</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<!-- CTA -->
-<div class="cta">
-  <h2>Baixe agora e comece grátis</h2>
-  <p>Disponível para Android e iPhone</p>
-  <div class="stores">
-    <a href="https://play.google.com/store/apps/details?id=com.vizinhovendedoa.app" class="store-btn google" target="_blank">
-      <span class="store-icon">▶</span>
-      <div class="store-text">
-        <small>Disponível no</small>
-        <strong>Google Play</strong>
-      </div>
-    </a>
-    <a href="https://apps.apple.com/us/app/do-vizinho/id6760084153" class="store-btn apple" target="_blank">
-      <span class="store-icon"></span>
-      <div class="store-text">
-        <small>Disponível na</small>
-        <strong>App Store</strong>
-      </div>
-    </a>
-  </div>
-</div>
-
 <!-- FOOTER -->
 <footer>
-  <div class="footer-links">
-    <a href="/privacy">Política de Privacidade</a>
-    <a href="/delete">Excluir minha conta</a>
-    <a href="mailto:dovizinhoapp@gmail.com">Contato</a>
+  <div class="footer-logo">
+    <img src="/assets/icon.png" alt="Do Vizinho">
+    <span>Do Vizinho</span>
   </div>
-  <p>© 2026 Do Vizinho. Todos os direitos reservados.</p>
-</footer>
-
-</body>
-</html>
+  <div class="footer-links">
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/delete">Delete Account</a>
+    <a href="/cdn-cgi/l/email-protection#01656e77687b686f696e60717141666c60686d2f626e6c">Contact</a>
+  </div>
+  <p>© 20
