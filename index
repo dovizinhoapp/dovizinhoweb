@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do Vizinho</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #f7f9fc;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 48px 32px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+}
+.emoji { font-size: 64px; margin-bottom: 16px; }
+.title { font-size: 22px; font-weight: 800; color: #1a1a2e; margin-bottom: 16px; }
+.msg { font-size: 15px; color: #666; line-height: 1.7; margin-bottom: 32px; }
+.btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  background: #2DB67D;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  margin-bottom: 12px;
+}
+.link {
+  font-size: 13px;
+  color: #aaa;
+  text-decoration: none;
+}
+.link:hover { color: #2DB67D; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="emoji">🔧</div>
+  <div class="title">Autenticação em manutenção</div>
+  <p class="msg">
+    Pedimos desculpas pelo inconveniente.<br><br>
+    A autenticação pelo Google está temporariamente em manutenção. Por favor, volte para o app e faça seu cadastro com e-mail e senha.
+  </p>
+  <a href="dovizinho://" class="btn">↩ Voltar para o app</a>
+  <a href="/home" class="link">Conhecer o Do Vizinho</a>
+</div>
+</body>
+</html>
