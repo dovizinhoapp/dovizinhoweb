@@ -697,34 +697,38 @@ function renderDetail(){
     </div>`
   :`<div class="detail-ph"><div class="detail-back" onclick="goBack()">←</div>${cat?.i||'📦'}</div>`;
 
-  document.getElementById('detail-inner').innerHTML=`
-    ${photoHtml}
-    <div class="detail-body">
-      <div class="detail-title">${item.title}</div>
-      <div class="detail-price" style="color:${priceColor}">${priceLbl}</div>
-      <div class="detail-meta">
-        ${item._dist!=null?`<span>📍 ${fmtDist(item._dist)}</span>`:''}
-        <span>⏱️ ${ago(item.created_at)}</span>
-        ${item.neighborhood?`<span>🏘️ ${item.neighborhood}</span>`:''}
-        ${item.category?`<span>${cat?.i||''} ${cat?.l||item.category}</span>`:''}
-      </div>
-      ${item.description?`<div class="detail-desc">${item.description}</div>`:''}
-      <div class="seller-card">
-        <div class="seller-av">${item.profiles?.avatar_url?`<img src="${item.profiles.avatar_url}">`:`${sellerInit}`}</div>
-        <div>
-          <div style="font-size:14px;font-weight:700">${sellerName}</div>
-          ${planTag}
-        </div>
-      </div>
-      <div class="btn-row">
-        <div class="btn-sec" id="fav-btn" onclick="toggleFav('${item.id}');renderDetail()">${fav?'❤️ Salvo':'🤍 Salvar'}</div>
-        <div class="btn-sec" onclick="shareItem('${item.id}')">📤 Compartilhar</div>
-        <div class="btn-sec" onclick="reportItem('${item.id}')">🚨 Denunciar</div>
-      </div>
-      <div class="ad-slot" style="margin:0 0 12px"><span>Publicidade</span></div>
-      <button class="btn-contact" onclick="openSafety('${item.id}')">💬 Entrar em contato via WhatsApp</button>
-    </div>`;
-}
+   document.getElementById('detail-inner').innerHTML=`
+     ${photoHtml}
+     <div class="detail-body">
+       <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+         <span style="background:${isPet?'#E91E63':isWanted?'#FF9800':item.price===0?'#4CAF50':'#2DB67D'};color:#fff;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700">${isPet?'🐾 PET PERDIDO':isWanted?'🔎 PROCURO':item.price===0?'🎁 GRÁTIS':'💰 À VENDA'}</span>
+         ${cat?`<span style="background:#f0f0f0;color:#555;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600">${cat.i} ${cat.l}</span>`:''}
+       </div>
+       <div class="detail-title">${item.title}</div>
+       <div class="detail-price" style="color:${priceColor}">${priceLbl}</div>
+       <div class="detail-meta">
+         ${item._dist!=null?`<span>📍 ${fmtDist(item._dist)}</span>`:''}
+         <span>⏱️ ${ago(item.created_at)}</span>
+         ${item.neighborhood?`<span>🏘️ ${item.neighborhood}</span>`:''}
+         ${item.condition?`<span>♻️ ${item.condition==='new'?'Novo':'Usado'}</span>`:''}
+       </div>
+       ${isExpiringSoon(item.expires_at)?`<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#F57F17">⏰ <strong>Expira hoje!</strong></div>`:''}
+       ${item.description?`<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid var(--brd)"><div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">DESCRIÇÃO</div><div style="font-size:14px;color:#444;line-height:1.65">${item.description}</div></div>`:''}
+       <div class="seller-card">
+         <div class="seller-av">${item.profiles?.avatar_url?`<img src="${item.profiles.avatar_url}">`:`${sellerInit}`}</div>
+         <div><div style="font-size:14px;font-weight:700">${sellerName}</div>${planTag}</div>
+       </div>
+       <div class="ad-slot" style="margin:0 0 12px"><span>Publicidade</span></div>
+       <button class="btn-contact" onclick="openSafety('${item.id}')">
+         <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+         Chamar no WhatsApp
+       </button>
+       <div style="text-align:center;margin-top:12px;display:flex;justify-content:center;gap:20px">
+         <span onclick="toggleFav('${item.id}');renderDetail()" style="cursor:pointer;font-size:13px;color:var(--mut)">${fav?'❤️ Salvo':'🤍 Salvar'}</span>
+         <span onclick="shareItem('${item.id}')" style="cursor:pointer;font-size:13px;color:var(--mut)">📤 Compartilhar</span>
+         <span onclick="reportItem('${item.id}')" style="cursor:pointer;font-size:13px;color:var(--dan)">🚩 Denunciar anúncio</span>
+       </div>
+     </div>`;
 
 function chPhoto(d){
   const photos=S.detail?.photos||[];
@@ -1067,30 +1071,35 @@ function profScreen(sub){
         <div class="plan-card" style="margin-top:12px">
           <h3>Grátis</h3>
           <div class="plan-p green">R$ 0<span style="font-size:14px;color:#999">/mês</span></div>
-          <div class="plan-f">10 anúncios ativos</div>
+          <div class="plan-f">Até 10 anúncios ativos</div>
           <div class="plan-f">1 foto por anúncio</div>
           <div class="plan-f">Mapa do bairro</div>
-          <div class="plan-f">Contato via WhatsApp</div>
-          <button class="plan-btn ${plan==='free'?'gray':'green'}">${plan==='free'?'Plano atual':'Usar plano grátis'}</button>
+          <div class="plan-f">Contato direto pelo WhatsApp</div>
+          <div style="font-size:12px;color:#e53935;padding:3px 0">❌ Seus anúncios aparecem por último</div>
+          <div style="font-size:12px;color:#e53935;padding:3px 0">❌ Com anúncios publicitários</div>
+          <button class="plan-btn gray" style="cursor:default">${plan==='free'?'Plano atual':'Plano grátis'}</button>
         </div>
-        <div class="plan-card pro">
+        <div class="plan-card pro" style="position:relative">
+          <div style="position:absolute;top:14px;right:14px;background:#2DB67D;color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:100px;letter-spacing:1px">POPULAR</div>
           <h3>⭐ Pro</h3>
           <div class="plan-p gold">R$ 4,90<span style="font-size:14px;color:#999">/mês</span></div>
-          <div class="plan-f">30 anúncios ativos</div>
+          <div class="plan-f">Até 30 anúncios ativos</div>
           <div class="plan-f">3 fotos por anúncio</div>
-          <div class="plan-f">Badge Pro no perfil</div>
+          <div class="plan-f">Seus anúncios aparecem primeiro</div>
+          <div class="plan-f">Sem anúncios publicitários</div>
           <div class="plan-f">Suporte via WhatsApp</div>
-          <button class="plan-btn ${plan==='pro'?'gray':'green'}">${plan==='pro'?'Plano atual':'Assinar Pro — R$ 4,90/mês'}</button>
+          <button class="plan-btn ${plan==='pro'?'gray':'green'}" onclick="${plan!=='pro'?'showToast(\'Assine pelo app para usar o plano Pro\')':''}">${plan==='pro'?'Plano atual':'Assinar via App'}</button>
         </div>
         <div class="plan-card loja">
           <h3>🏪 Loja</h3>
           <div class="plan-p purple">R$ 29,90<span style="font-size:14px;color:#999">/mês</span></div>
-          <div class="plan-f">200 anúncios ativos</div>
+          <div class="plan-f">Até 200 anúncios ativos</div>
           <div class="plan-f">5 fotos por anúncio</div>
-          <div class="plan-f">Nome da loja em destaque</div>
-          <div class="plan-f">Badge Loja no feed</div>
-          <div class="plan-f">Suporte prioritário</div>
-          <button class="plan-btn ${plan==='loja'?'gray':'purple'}">${plan==='loja'?'Plano atual':'Abrir minha loja — R$ 29,90/mês'}</button>
+          <div class="plan-f">Seus anúncios aparecem primeiro</div>
+          <div class="plan-f">Sem anúncios publicitários</div>
+          <div class="plan-f">Badge de Loja no perfil</div>
+          <div class="plan-f">Suporte prioritário via WhatsApp</div>
+          <button class="plan-btn ${plan==='loja'?'gray':'purple'}" onclick="${plan!=='loja'?'showToast(\'Assine pelo app para usar o plano Loja\')':''}">${plan==='loja'?'Plano atual':'Assinar via App'}</button>
         </div>
       </div>`;
   }else if(sub==='settings'){
@@ -1098,9 +1107,9 @@ function profScreen(sub){
       <div class="subhdr"><div class="subhdr-back" onclick="renderProfile()">←</div><div class="subhdr-title">⚙️ Configurações</div></div>
       <div style="flex:1;overflow-y:auto;padding-bottom:80px">
         <div class="sec-lbl">Notificações</div>
-        <div class="tog-row"><span style="font-size:14px;font-weight:600">Novos anúncios</span><div class="toggle on" id="tog-ads" onclick="toggleNotif('ads')"></div></div>
-        <div class="tog-row"><span style="font-size:14px;font-weight:600">Mensagens</span><div class="toggle on" id="tog-msg" onclick="toggleNotif('msg')"></div></div>
-        <div class="tog-row"><span style="font-size:14px;font-weight:600">Favoritos</span><div class="toggle on" id="tog-fav" onclick="toggleNotif('fav')"></div></div>
+        <div class="prof-row" onclick="toggleNotif('ads',this)"><span style="font-size:14px;font-weight:600">Novos anúncios perto</span><span id="tog-ads" style="font-size:13px;color:#2DB67D;font-weight:600">✅ Ativado</span></div>
+        <div class="prof-row" onclick="toggleNotif('msg',this)"><span style="font-size:14px;font-weight:600">Mensagens no chat</span><span id="tog-msg" style="font-size:13px;color:#2DB67D;font-weight:600">✅ Ativado</span></div>
+        <div class="prof-row" onclick="toggleNotif('fav',this)"><span style="font-size:14px;font-weight:600">Favoritos atualizados</span><span id="tog-fav" style="font-size:13px;color:#2DB67D;font-weight:600">✅ Ativado</span></div>
         <div class="sec-lbl">Sobre</div>
         <div class="prof-row"><div class="prof-row-l">Versão</div><div class="prof-row-r">PWA 1.0</div></div>
         <div class="prof-row"><div class="prof-row-l">Plano</div><div class="prof-row-r">${S.profile?.plan||'free'}</div></div>
@@ -1112,27 +1121,49 @@ function profScreen(sub){
 
 function toggleNotif(key){
   const el=document.getElementById('tog-'+key);
-  el.classList.toggle('on');
+  const on=el.textContent.includes('Ativado');
+  el.textContent=on?'❌ Desativado':'✅ Ativado';
+  el.style.color=on?'var(--mut)':'#2DB67D';
 }
 
 async function loadMyAds2(){
   const el=document.getElementById('my-ads-list');if(!el||!S.user)return;
   const{data}=await sb.from('listings').select('*').eq('user_id',S.user.id).order('created_at',{ascending:false}).limit(30);
+  const activeCount=(data||[]).filter(i=>i.status==='active').length;
+  // Atualizar header
+  const hdr=document.querySelector('#s-profile .subhdr-title');
+  if(hdr)hdr.textContent=`📋 Meus anúncios (${activeCount} ativo${activeCount!==1?'s':''})`;
   if(!data?.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📦</div><div class="empty-h">Nenhum anúncio</div><div class="empty-p">Publique seu primeiro anúncio!</div></div>`;return;}
   el.innerHTML=data.map(item=>{
     const active=item.status==='active';
     const thumb=item.photos?.length?`<img src="${item.photos[0]}">`:`<div style="font-size:22px">${CATS.find(c=>c.id===item.category)?.i||'📦'}</div>`;
     const price=item.price>0?'R$ '+item.price:item.type==='wanted'?'Procuro':'Grátis';
-    return `<div class="my-ad-item">
+    const statusBadge=active
+      ?`<span style="background:#E8F5E9;color:#2E7D32;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px">ATIVO</span>`
+      :`<span style="background:#f0f0f0;color:#888;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px">ENCERRADO</span>`;
+    const actions=active?`<div style="display:flex;flex-direction:column;gap:6px">
+      <button style="background:#E3F2FD;color:#1565C0;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif" onclick="showToast('Edição disponível no app')">✏️ Editar</button>
+      <button style="background:#FFF3E0;color:#E65100;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif" onclick="encerrarAd('${item.id}')">Encerrar</button>
+      <button style="background:#FFEBEE;color:var(--dan);border:none;border-radius:8px;padding:6px 8px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif" onclick="delMyAd('${item.id}')">🗑️</button>
+    </div>`
+    :`<div style="cursor:pointer;color:var(--dan);font-size:18px;padding:6px" onclick="delMyAd('${item.id}')">🗑️</div>`;
+    return `<div class="my-ad-item" style="align-items:flex-start;padding:12px">
       <div class="my-ad-thumb">${thumb}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</div>
-        <div style="font-size:12px;color:var(--pri);margin-top:2px">${price}</div>
-        <div style="font-size:11px;color:var(--mut);margin-top:2px"><span class="status-dot ${active?'active':'expired'}"></span>${active?'Ativo':'Expirado'} · ${ago(item.created_at)}</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</div>
+        <div style="font-size:12px;color:var(--pri);margin-bottom:4px">${price}</div>
+        ${statusBadge}
       </div>
-      ${active?`<div style="cursor:pointer;font-size:20px;padding:6px;color:var(--dan)" onclick="delMyAd('${item.id}')">🗑️</div>`:''}
+      ${actions}
     </div>`;
   }).join('');
+}
+
+async function encerrarAd(id){
+  if(!confirm('Encerrar este anúncio?'))return;
+  await sb.from('listings').update({status:'closed'}).eq('id',id);
+  showToast('Anúncio encerrado');
+  await loadListings();loadMyAds2();
 }
 
 async function pickAvatar(){
@@ -1285,6 +1316,12 @@ async function delMyAd(id){
 // ═══════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════
+function isExpiringSoon(expiresAt){
+  if(!expiresAt)return false;
+  const diff=(new Date(expiresAt)-Date.now())/(1000*60*60*24);
+  return diff>=0&&diff<=1;
+}
+
 function dist(lat1,lon1,lat2,lon2){
   const R=6371,dL=(lat2-lat1)*Math.PI/180,dLn=(lon2-lon1)*Math.PI/180;
   const a=Math.sin(dL/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLn/2)**2;
