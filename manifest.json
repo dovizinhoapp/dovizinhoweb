@@ -1,0 +1,14 @@
+{
+  "name": "Do Vizinho",
+  "short_name": "Do Vizinho",
+  "description": "Compre, venda e doe no seu bairro",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2DB67D",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/assets/icon.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
