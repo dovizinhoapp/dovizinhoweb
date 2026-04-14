@@ -168,30 +168,50 @@ label.lbl{display:block;font-size:12px;font-weight:700;margin-bottom:5px;color:v
 
 /* PROFILE */
 .prof-body{flex:1;overflow-y:auto;padding-bottom:80px;}
-.prof-hdr{background:var(--navy);padding:52px 20px 24px;display:flex;align-items:center;gap:14px;}
-.prof-av{width:68px;height:68px;border-radius:34px;background:var(--pri);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0;}
+.prof-top{background:var(--navy);padding:52px 20px 24px;}
+.prof-av-row{display:flex;align-items:center;gap:14px;}
+.prof-av{width:72px;height:72px;border-radius:36px;background:var(--pri);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0;position:relative;cursor:pointer;}
 .prof-av img{width:100%;height:100%;object-fit:cover;}
-.prof-name{font-size:19px;font-weight:800;color:#fff;}
-.prof-plan{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px;}
-.sec-lbl{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:1px;padding:14px 18px 6px;}
-.prof-row{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:#fff;border-bottom:1px solid var(--brd);cursor:pointer;}
+.prof-av-edit{position:absolute;bottom:0;right:0;background:var(--navy);border-radius:10px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.prof-name{font-size:19px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;}
+.prof-plan-badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;margin-top:4px;}
+.prof-hood{font-size:12px;color:rgba(255,255,255,0.5);margin-top:2px;}
+.phone-box{margin:12px 16px;background:#fff;border-radius:14px;padding:14px;border:1px solid var(--brd);}
+.invite-box{margin:8px 16px;background:var(--pri-lt);border-radius:14px;padding:14px;border:1px solid rgba(45,182,125,0.2);}
+.menu-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border-bottom:1px solid var(--brd);cursor:pointer;}
+.menu-icon{font-size:20px;width:28px;text-align:center;}
+.menu-label{font-size:14px;font-weight:700;flex:1;}
+.menu-sub{font-size:11px;color:var(--mut);margin-top:1px;}
+.sec-lbl{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:1px;padding:14px 16px 6px;}
+.prof-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:#fff;border-bottom:1px solid var(--brd);cursor:pointer;}
 .prof-row-l{font-size:14px;font-weight:600;}
 .prof-row-r{font-size:12px;color:var(--mut);}
-.prof-row.danger .prof-row-l{color:var(--dan);}
-.plan-box{margin:10px 14px;border-radius:16px;padding:18px;border:2px solid var(--brd);}
-.plan-box.pro{border-color:#FFD166;background:#fffdf0;}
-.plan-box.loja{border-color:#8B5CF6;background:#faf8ff;}
-.plan-box h3{font-size:16px;font-weight:800;margin-bottom:3px;}
-.plan-box .plan-price{font-size:26px;font-weight:900;margin-bottom:3px;}
-.plan-box .plan-price.green{color:var(--pri);}
-.plan-box .plan-price.gold{color:#b37700;}
-.plan-box .plan-price.purple{color:#7c3aed;}
-.plan-feat{font-size:12px;color:#555;padding:3px 0;}
-.plan-feat::before{content:'✓ ';color:var(--pri);font-weight:900;}
-.plan-act{display:block;width:100%;padding:13px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:14px;text-align:center;}
-.plan-act.green{background:var(--pri);color:#fff;}
-.plan-act.purple{background:#7c3aed;color:#fff;}
-.plan-act.gray{background:var(--brd);color:var(--mut);}
+/* SUB SCREENS */
+.subhdr{background:#fff;padding:52px 16px 14px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.subhdr-back{font-size:22px;cursor:pointer;color:var(--pri);}
+.subhdr-title{font-size:18px;font-weight:800;}
+.plan-card{margin:10px 14px;border-radius:16px;padding:18px;border:2px solid var(--brd);}
+.plan-card.pro{border-color:#FFD166;background:#fffdf0;}
+.plan-card.loja{border-color:#8B5CF6;background:#faf8ff;}
+.plan-card h3{font-size:17px;font-weight:800;margin-bottom:3px;}
+.plan-p{font-size:26px;font-weight:900;margin-bottom:3px;}
+.plan-p.gold{color:#b37700;}.plan-p.purple{color:#7c3aed;}.plan-p.green{color:var(--pri);}
+.plan-f{font-size:12px;color:#555;padding:3px 0;}
+.plan-f::before{content:'✓ ';color:var(--pri);font-weight:900;}
+.plan-btn{display:block;width:100%;padding:13px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:14px;text-align:center;}
+.plan-btn.green{background:var(--pri);color:#fff;}
+.plan-btn.purple{background:#7c3aed;color:#fff;}
+.plan-btn.gray{background:var(--brd);color:var(--mut);}
+.my-ad-item{display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:10px;margin-bottom:8px;border:1px solid var(--brd);}
+.my-ad-thumb{width:56px;height:56px;border-radius:9px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;}
+.my-ad-thumb img{width:56px;height:56px;object-fit:cover;}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;}
+.status-dot.active{background:#4CAF50;}.status-dot.expired{background:#999;}
+.tog-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-bottom:1px solid var(--brd);}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--brd);position:relative;cursor:pointer;transition:background 0.2s;}
+.toggle.on{background:var(--pri);}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:10px;background:#fff;transition:left 0.2s;}
+.toggle.on::after{left:22px;}
 
 /* MAP */
 #map-wrap{flex:1;position:relative;}
@@ -450,12 +470,23 @@ async function loadFavs(){
 async function loadListings(){
   try{
     await sb.rpc('expire_old_listings').catch(()=>{});
-    const{data}=await sb.from('listings')
+    const{data,error}=await sb.from('listings')
       .select('*, profiles(name,plan,avatar_url)')
       .eq('status','active')
       .order('created_at',{ascending:false});
-    S.listings=data||[];
-  }catch(e){S.listings=[];}
+    if(error){
+      console.error('loadListings error:',error.message,error.code);
+      // Tentar sem o join de profiles se falhar
+      const{data:d2,error:e2}=await sb.from('listings')
+        .select('*')
+        .eq('status','active')
+        .order('created_at',{ascending:false});
+      if(e2){console.error('loadListings fallback error:',e2.message);}
+      S.listings=d2||[];
+    }else{
+      S.listings=data||[];
+    }
+  }catch(e){console.error('loadListings exception:',e.message);S.listings=[];}
   applyFilters();
   updateMapMarkers();
 }
@@ -926,7 +957,7 @@ function renderProfile(){
     el.innerHTML=`<div style="padding:52px 20px;text-align:center">
       <div style="font-size:60px;margin-bottom:14px">👤</div>
       <div style="font-size:20px;font-weight:800;margin-bottom:8px">Faça login</div>
-      <div style="font-size:13px;color:var(--mut);margin-bottom:22px">Para acessar seu perfil, anúncios e favoritos</div>
+      <div style="font-size:13px;color:var(--mut);margin-bottom:22px">Para acessar seu perfil e favoritos</div>
       <button class="btn-pri" onclick="go('auth')">Entrar ou cadastrar</button>
     </div>`;
     return;
@@ -934,98 +965,203 @@ function renderProfile(){
   const p=S.profile;
   const plan=p.plan||'free';
   const planName=plan==='free'?'Grátis':plan==='pro'?'⭐ Pro':'🏪 Loja';
+  const planColor=plan==='free'?'#4CAF50':plan==='pro'?'#FFD166':'#8B5CF6';
   const init=(p.name||'V')[0].toUpperCase();
+  const activeAds=S.listings.filter(i=>i.user_id===S.user.id&&i.status==='active').length;
   el.innerHTML=`
-    <div class="prof-hdr">
-      <div class="prof-av">${p.avatar_url?`<img src="${p.avatar_url}">`:`${init}`}</div>
-      <div><div class="prof-name">${p.name||'Vizinho'}</div><div class="prof-plan">${planName}</div></div>
-    </div>
-    <div class="sec-lbl">Planos</div>
-    <div style="padding:0 12px">
-      <div class="plan-box pro" style="margin-bottom:8px">
-        <h3>⭐ Pro</h3>
-        <div class="plan-price gold">R$ 4,90<span style="font-size:14px;font-weight:400;color:#999">/mês</span></div>
-        <div class="plan-feat">30 anúncios ativos</div>
-        <div class="plan-feat">3 fotos por anúncio</div>
-        <div class="plan-feat">Badge Pro no perfil</div>
-        <div class="plan-feat">Suporte via WhatsApp</div>
-        <button class="plan-act ${plan==='pro'?'gray':'green'}">${plan==='pro'?'Plano atual':'Assinar Pro — R$ 4,90/mês'}</button>
-      </div>
-      <div class="plan-box loja">
-        <h3>🏪 Loja</h3>
-        <div class="plan-price purple">R$ 29,90<span style="font-size:14px;font-weight:400;color:#999">/mês</span></div>
-        <div class="plan-feat">200 anúncios ativos</div>
-        <div class="plan-feat">5 fotos por anúncio</div>
-        <div class="plan-feat">Nome da loja em destaque</div>
-        <div class="plan-feat">Badge Loja no feed</div>
-        <div class="plan-feat">Suporte prioritário</div>
-        <button class="plan-act ${plan==='loja'?'gray':'purple'}">${plan==='loja'?'Plano atual':'Abrir minha loja — R$ 29,90/mês'}</button>
+    <div class="prof-top">
+      <div class="prof-av-row">
+        <div class="prof-av" onclick="pickAvatar()">
+          ${p.avatar_url?`<img src="${p.avatar_url}">`:`${init}`}
+          <div class="prof-av-edit">📷</div>
+        </div>
+        <div style="flex:1">
+          <div class="prof-name" id="prof-name-wrap">
+            <span id="prof-name-txt">${p.name||'Vizinho'}</span>
+            <span style="font-size:12px;opacity:0.5;cursor:pointer" onclick="editName()">✏️</span>
+          </div>
+          <div class="prof-hood">📍 ${p.neighborhood||'Seu bairro'}</div>
+          <div class="prof-plan-badge" style="background:${planColor};color:${plan==='free'?'#fff':'#1B2340'}">${planName}</div>
+        </div>
       </div>
     </div>
-    <div class="sec-lbl">Meus anúncios</div>
-    <div id="my-ads" style="padding:0 12px"><div class="spinner" style="margin:12px auto"></div></div>
-    <div class="sec-lbl">Conta</div>
-    <div class="prof-row"><div class="prof-row-l">📱 WhatsApp</div><div class="prof-row-r">${p.phone?'+'+p.phone:'Não cadastrado'}</div></div>
-    <div class="prof-row"><div class="prof-row-l">✉️ E-mail</div><div class="prof-row-r">${S.user.email||''}</div></div>
-    <div class="sec-lbl">Sobre</div>
-    <div class="prof-row"><div class="prof-row-l">Versão</div><div class="prof-row-r">PWA 1.0</div></div>
-    <div class="prof-row" onclick="window.open('/privacy','_blank')"><div class="prof-row-l" style="color:var(--pri)">Política de Privacidade</div><div class="prof-row-r">↗</div></div>
-    <div class="sec-lbl">Conta</div>
-    <div class="prof-row" onclick="doSignOut()"><div class="prof-row-l danger" style="color:var(--dan)">Sair</div><div class="prof-row-r">→</div></div>
-    <div class="prof-row danger" onclick="doDeleteAccount()"><div class="prof-row-l">🗑️ Excluir minha conta</div><div class="prof-row-r">↗</div></div>
+
+    <div class="phone-box">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:16px">📱</span>
+        <span style="font-size:13px;font-weight:700">WhatsApp vinculado</span>
+      </div>
+      ${p.phone
+        ?`<div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:15px;font-weight:700">+${p.phone}</span>
+            <span style="font-size:11px;color:var(--mut)">Vinculado à conta</span>
+          </div>`
+        :`<div style="font-size:13px;color:var(--mut)">Nenhum número cadastrado</div>`}
+      <div style="font-size:11px;color:var(--mut);margin-top:4px">O número é definido no cadastro</div>
+    </div>
+
+    <div class="invite-box">
+      <div style="font-size:14px;font-weight:800;margin-bottom:8px">📲 Convide vizinhos!</div>
+      <button class="btn-pri" style="margin-bottom:0;padding:11px" onclick="shareApp()">📤 Compartilhar no WhatsApp</button>
+    </div>
+
+    <div style="margin-top:8px">
+      <div class="menu-item" onclick="profScreen('ads')">
+        <div class="menu-icon">📋</div>
+        <div style="flex:1"><div class="menu-label">Meus Anúncios</div><div class="menu-sub">${activeAds} ativo${activeAds!==1?'s':''}</div></div>
+        <span style="color:#ccc;font-size:20px">›</span>
+      </div>
+      <div class="menu-item" onclick="profScreen('plans')">
+        <div class="menu-icon">⭐</div>
+        <div style="flex:1"><div class="menu-label">Planos</div><div class="menu-sub">${planName}</div></div>
+        <span style="color:#ccc;font-size:20px">›</span>
+      </div>
+      <div class="menu-item" onclick="profScreen('settings')">
+        <div class="menu-icon">⚙️</div>
+        <div style="flex:1"><div class="menu-label">Configurações</div></div>
+        <span style="color:#ccc;font-size:20px">›</span>
+      </div>
+      <div class="menu-item" onclick="window.open('/privacy','_blank')">
+        <div class="menu-icon">🔒</div>
+        <div style="flex:1"><div class="menu-label">Política de Privacidade</div></div>
+        <span style="color:#ccc;font-size:20px">↗</span>
+      </div>
+    </div>
+
+    ${(plan==='pro'||plan==='loja')?`
+    <div style="margin:12px 16px">
+      <button class="btn-pri" onclick="window.open('https://wa.me/5511984716999?text=Olá! Preciso de suporte no Do Vizinho.','_blank')">💬 Falar com suporte</button>
+    </div>`:``}
+
+    <div style="padding:16px;text-align:center">
+      <div style="font-size:12px;color:var(--mut);margin-bottom:12px">${S.user.email||''}</div>
+      <button class="btn-out" style="margin-bottom:10px" onclick="doSignOut()">Sair da conta</button>
+    </div>
   `;
-  loadMyAds();
 }
 
-async function loadMyAds(){
-  const el=document.getElementById('my-ads');if(!el||!S.user)return;
-  const{data}=await sb.from('listings').select('*').eq('user_id',S.user.id).order('created_at',{ascending:false}).limit(20);
-  if(!data?.length){el.innerHTML=`<div style="padding:12px;color:var(--mut);font-size:13px">Nenhum anúncio publicado ainda.</div>`;return;}
+function profScreen(sub){
+  const el=document.getElementById('prof-body');
+  if(sub==='ads'){
+    el.innerHTML=`
+      <div class="subhdr"><div class="subhdr-back" onclick="renderProfile()">←</div><div class="subhdr-title">📋 Meus Anúncios</div></div>
+      <div style="flex:1;overflow-y:auto;padding:12px 14px 80px" id="my-ads-list"><div class="loading-full"><div class="spinner"></div></div></div>`;
+    loadMyAds2();
+  }else if(sub==='plans'){
+    const plan=S.profile?.plan||'free';
+    el.innerHTML=`
+      <div class="subhdr"><div class="subhdr-back" onclick="renderProfile()">←</div><div class="subhdr-title">⭐ Planos</div></div>
+      <div style="flex:1;overflow-y:auto;padding-bottom:80px">
+        <div class="plan-card" style="margin-top:12px">
+          <h3>Grátis</h3>
+          <div class="plan-p green">R$ 0<span style="font-size:14px;color:#999">/mês</span></div>
+          <div class="plan-f">10 anúncios ativos</div>
+          <div class="plan-f">1 foto por anúncio</div>
+          <div class="plan-f">Mapa do bairro</div>
+          <div class="plan-f">Contato via WhatsApp</div>
+          <button class="plan-btn ${plan==='free'?'gray':'green'}">${plan==='free'?'Plano atual':'Usar plano grátis'}</button>
+        </div>
+        <div class="plan-card pro">
+          <h3>⭐ Pro</h3>
+          <div class="plan-p gold">R$ 4,90<span style="font-size:14px;color:#999">/mês</span></div>
+          <div class="plan-f">30 anúncios ativos</div>
+          <div class="plan-f">3 fotos por anúncio</div>
+          <div class="plan-f">Badge Pro no perfil</div>
+          <div class="plan-f">Suporte via WhatsApp</div>
+          <button class="plan-btn ${plan==='pro'?'gray':'green'}">${plan==='pro'?'Plano atual':'Assinar Pro — R$ 4,90/mês'}</button>
+        </div>
+        <div class="plan-card loja">
+          <h3>🏪 Loja</h3>
+          <div class="plan-p purple">R$ 29,90<span style="font-size:14px;color:#999">/mês</span></div>
+          <div class="plan-f">200 anúncios ativos</div>
+          <div class="plan-f">5 fotos por anúncio</div>
+          <div class="plan-f">Nome da loja em destaque</div>
+          <div class="plan-f">Badge Loja no feed</div>
+          <div class="plan-f">Suporte prioritário</div>
+          <button class="plan-btn ${plan==='loja'?'gray':'purple'}">${plan==='loja'?'Plano atual':'Abrir minha loja — R$ 29,90/mês'}</button>
+        </div>
+      </div>`;
+  }else if(sub==='settings'){
+    el.innerHTML=`
+      <div class="subhdr"><div class="subhdr-back" onclick="renderProfile()">←</div><div class="subhdr-title">⚙️ Configurações</div></div>
+      <div style="flex:1;overflow-y:auto;padding-bottom:80px">
+        <div class="sec-lbl">Notificações</div>
+        <div class="tog-row"><span style="font-size:14px;font-weight:600">Novos anúncios</span><div class="toggle on" id="tog-ads" onclick="toggleNotif('ads')"></div></div>
+        <div class="tog-row"><span style="font-size:14px;font-weight:600">Mensagens</span><div class="toggle on" id="tog-msg" onclick="toggleNotif('msg')"></div></div>
+        <div class="tog-row"><span style="font-size:14px;font-weight:600">Favoritos</span><div class="toggle on" id="tog-fav" onclick="toggleNotif('fav')"></div></div>
+        <div class="sec-lbl">Sobre</div>
+        <div class="prof-row"><div class="prof-row-l">Versão</div><div class="prof-row-r">PWA 1.0</div></div>
+        <div class="prof-row"><div class="prof-row-l">Plano</div><div class="prof-row-r">${S.profile?.plan||'free'}</div></div>
+        <div class="sec-lbl">Conta</div>
+        <div class="prof-row" style="cursor:pointer" onclick="doDeleteAccount()"><div class="prof-row-l" style="color:var(--dan)">🗑️ Excluir minha conta</div><div class="prof-row-r">↗</div></div>
+      </div>`;
+  }
+}
+
+function toggleNotif(key){
+  const el=document.getElementById('tog-'+key);
+  el.classList.toggle('on');
+}
+
+async function loadMyAds2(){
+  const el=document.getElementById('my-ads-list');if(!el||!S.user)return;
+  const{data}=await sb.from('listings').select('*').eq('user_id',S.user.id).order('created_at',{ascending:false}).limit(30);
+  if(!data?.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📦</div><div class="empty-h">Nenhum anúncio</div><div class="empty-p">Publique seu primeiro anúncio!</div></div>`;return;}
   el.innerHTML=data.map(item=>{
     const active=item.status==='active';
     const thumb=item.photos?.length?`<img src="${item.photos[0]}">`:`<div style="font-size:22px">${CATS.find(c=>c.id===item.category)?.i||'📦'}</div>`;
+    const price=item.price>0?'R$ '+item.price:item.type==='wanted'?'Procuro':'Grátis';
     return `<div class="my-ad-item">
       <div class="my-ad-thumb">${thumb}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</div>
+        <div style="font-size:12px;color:var(--pri);margin-top:2px">${price}</div>
         <div style="font-size:11px;color:var(--mut);margin-top:2px"><span class="status-dot ${active?'active':'expired'}"></span>${active?'Ativo':'Expirado'} · ${ago(item.created_at)}</div>
       </div>
-      ${active?`<div style="cursor:pointer;color:var(--dan);font-size:20px;padding:4px" onclick="delMyAd('${item.id}')">🗑️</div>`:''}
+      ${active?`<div style="cursor:pointer;font-size:20px;padding:6px;color:var(--dan)" onclick="delMyAd('${item.id}')">🗑️</div>`:''}
     </div>`;
   }).join('');
 }
 
-async function delMyAd(id){
-  if(!confirm('Remover este anúncio?'))return;
-  await sb.from('listings').delete().eq('id',id);
-  showToast('Anúncio removido');await loadListings();loadMyAds();
+async function pickAvatar(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=async e=>{
+    const file=e.target.files[0];if(!file)return;
+    const blob=await new Promise(r=>{const fr=new FileReader();fr.onload=ev=>r(fetch(ev.target.result).then(r2=>r2.blob()));fr.readAsDataURL(file);});
+    const path=`avatars/${S.user.id}.jpg`;
+    const{error}=await sb.storage.from('photos').upload(path,await blob,{contentType:'image/jpeg',upsert:true});
+    if(!error){
+      const{data:ud}=sb.storage.from('photos').getPublicUrl(path);
+      await sb.from('profiles').update({avatar_url:ud.publicUrl}).eq('id',S.user.id);
+      await loadProfile();renderProfile();showToast('Foto atualizada!');
+    }
+  };
+  inp.click();
 }
 
-async function doSignOut(){
-  if(!confirm('Deseja sair?'))return;
-  await sb.auth.signOut();S.user=null;S.profile=null;S.favs=new Set();
-  go('feed');showToast('Até logo!');
+function editName(){
+  const el=document.getElementById('prof-name-wrap');
+  const current=S.profile?.name||'';
+  el.innerHTML=`<input id="name-inp" value="${current}" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:8px;padding:6px 10px;color:#fff;font-size:16px;font-weight:700;font-family:'DM Sans',sans-serif;outline:none;width:140px" maxlength="30">
+    <span style="cursor:pointer;font-size:18px;color:var(--pri)" onclick="saveName()">✓</span>
+    <span style="cursor:pointer;font-size:16px;opacity:0.5" onclick="renderProfile()">✕</span>`;
+  document.getElementById('name-inp')?.focus();
 }
 
-async function doDeleteAccount(){
-  if(!confirm('Tem certeza? Todos os seus dados serão excluídos permanentemente.'))return;
-  if(!confirm('Confirme: excluir conta definitivamente?'))return;
-  try{
-    const id=S.user.id;
-    await sb.from('reports').delete().eq('reporter_id',id);
-    await sb.from('favorites').delete().eq('user_id',id);
-    await sb.from('listings').delete().eq('user_id',id);
-    await sb.from('profiles').delete().eq('id',id);
-    await sb.rpc('delete_user');
-    await sb.auth.signOut();
-    S.user=null;S.profile=null;
-    go('feed');showToast('Conta excluída');
-  }catch(e){showToast('Erro ao excluir conta');}
+async function saveName(){
+  const name=document.getElementById('name-inp')?.value?.trim();
+  if(!name||name.length<2){showToast('Nome muito curto');return;}
+  await sb.from('profiles').update({name}).eq('id',S.user.id);
+  await loadProfile();renderProfile();showToast('Nome atualizado!');
 }
 
-// ═══════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════
+function shareApp(){
+  const txt='Conhece o Do Vizinho? Compre, venda e doe com vizinhos perto de você! Acesse: https://dovizinho.com.br/app';
+  if(navigator.share)navigator.share({text:txt});
+  else{navigator.clipboard?.writeText(txt);showToast('Link copiado!');}
+}
+
+
 function renderAuth(){
   const el=document.getElementById('auth-body');
   if(S.authView==='register'){
