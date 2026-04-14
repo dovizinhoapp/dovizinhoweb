@@ -20,7 +20,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 #app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;position:relative;background:#fff;box-shadow:0 0 40px rgba(0,0,0,0.12);}
 
 /* SCREENS */
-.screen{flex:1;overflow:hidden;display:none;flex-direction:column;}
+.screen{flex:1;overflow:hidden;display:none;flex-direction:column;min-height:0;}
 .screen.active{display:flex;}
 
 /* HEADER */
@@ -259,14 +259,9 @@ textarea.inp{resize:none;height:90px;}
         <input id="q" placeholder="Buscar anúncios..." oninput="applyFilters()">
       </div>
     </div>
-    <div id="safety-banner" class="safety-wrap">
-      <div>🛡️ <strong>Compre e venda com segurança</strong><br><span style="opacity:0.85">Encontre-se em locais públicos · Nunca envie dinheiro antecipado · Prefira pagamento em mãos</span></div>
-      <div class="safety-close" onclick="this.parentElement.style.display='none'">✕</div>
-    </div>
     <div class="cats-bar" id="cats-bar"></div>
     <div class="pills-bar" id="filters-bar"></div>
     <div class="radius-bar" id="radius-bar"></div>
-    <div class="ad-slot" id="feed-ad"><span>Publicidade</span></div>
     <div class="feed-list" id="feed-list">
       <div class="loading-full"><div class="spinner"></div><span style="color:var(--mut);font-size:13px">Carregando...</span></div>
     </div>
@@ -422,6 +417,7 @@ const S = {
   pubMode:null, pubPhotos:[], pubCat:'',
   authView:'login',
   showPass:false, showPass2:false,
+  safetyDismissed:false, locError:false,
 };
 
 // ═══════════════════════════════════════════
@@ -437,10 +433,11 @@ async function init(){
 
 async function getLocation(){
   return new Promise(r=>{
-    if(!navigator.geolocation)return r();
+    if(!navigator.geolocation){S.locError=true;return r();}
     navigator.geolocation.getCurrentPosition(p=>{
-      S.userLoc={lat:p.coords.latitude,lng:p.coords.longitude};r();
-    },()=>r(),{timeout:6000});
+      S.userLoc={lat:p.coords.latitude,lng:p.coords.longitude};
+      S.locError=false;r();
+    },()=>{S.locError=true;r();},{timeout:6000,enableHighAccuracy:false});
   });
 }
 
@@ -585,14 +582,29 @@ function applyFilters(){
   S.query=document.getElementById('q')?.value||'';
   const items=getFiltered();
   const list=document.getElementById('feed-list');
+
+  // Safety banner - sempre o primeiro elemento
+  const safetyHtml=S.safetyDismissed?'':`<div id="safety-in-feed" style="margin:0 0 8px;padding:10px 12px;background:#FFF8E1;border:1px solid #FFD54F;border-radius:12px;font-size:12px;color:#5D4037;display:flex;gap:8px;align-items:flex-start">
+    <div>🛡️ <strong>Compre e venda com segurança</strong><br><span style="opacity:0.85">Encontre-se em locais públicos · Nunca envie dinheiro antecipado · Prefira pagamento em mãos</span></div>
+    <div style="cursor:pointer;font-size:16px;flex-shrink:0" onclick="S.safetyDismissed=true;applyFilters()">✕</div>
+  </div>`;
+
+  // Aviso de localização
+  const locHtml=S.locError?`<div style="margin:0 0 8px;padding:8px 12px;background:#FFF3E0;border:1px solid #FFB74D;border-radius:10px;font-size:11px;color:#E65100;display:flex;align-items:center;gap:8px">
+    📍 <span>Localização não disponível. Mostrando todos os anúncios. <span style="text-decoration:underline;cursor:pointer" onclick="getLocation().then(()=>applyFilters())">Ativar</span></span>
+  </div>`:'';
+
   if(!items.length){
-    list.innerHTML=`<div class="empty"><div class="empty-icon">📦</div><div class="empty-h">Nenhum anúncio</div><div class="empty-p">Tente mudar o filtro ou aumentar o raio de busca.</div></div>`;
+    list.innerHTML=safetyHtml+locHtml+`<div class="empty"><div class="empty-icon">📦</div><div class="empty-h">Nenhum anúncio</div><div class="empty-p">Tente mudar o filtro ou aumentar o raio de busca.</div></div>`;
     return;
   }
-  list.innerHTML=items.map((item,idx)=>{
-    const ad=idx>0&&idx%5===0?`<div class="ad-slot"><span>Publicidade</span></div>`:'';
+
+  const cardsHtml=items.map((item,idx)=>{
+    const ad=idx>0&&idx%5===0?`<div class="ad-slot" style="margin:4px 0 8px"><span style="font-size:10px;color:#bbb">Publicidade</span></div>`:'';
     return ad+cardHtml(item);
   }).join('');
+
+  list.innerHTML=safetyHtml+locHtml+cardsHtml;
 }
 
 function getFiltered(){
