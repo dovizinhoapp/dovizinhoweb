@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2DB67D">
+<title>Do Vizinho</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/assets/icon.png">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root{--pri:#2DB67D;--pri-lt:#E8F8F0;--navy:#1B2340;--txt:#1a1a2e;--mut:#888;--brd:#e8e8e8;--bg:#f5f7fa;--dan:#e53935;--acc:#FF6B6B;--fav:#E91E63;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);overflow:hidden;}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;position:relative;background:#fff;box-shadow:0 0 40px rgba(0,0,0,0.12);}
+
+/* SCREENS */
+.screen{flex:1;overflow:hidden;display:none;flex-direction:column;}
+.screen.active{display:flex;}
+
+/* HEADER */
+.hdr{padding:48px 16px 14px;border-radius:0 0 20px 20px;flex-shrink:0;}
+.hdr.green{background:var(--pri);}
+.hdr.pink{background:#E91E63;}
+.hdr.navy{background:var(--navy);}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;}
+.hdr-title{font-size:22px;font-weight:800;color:#fff;}
+.hdr-sub{font-size:12px;color:rgba(255,255,255,0.7);margin-top:2px;}
+
+/* SEARCH */
+.search-wrap{background:rgba(255,255,255,0.2);border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:8px;margin-top:10px;}
+.search-wrap input{background:none;border:none;outline:none;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;flex:1;width:100%;}
+.search-wrap input::placeholder{color:rgba(255,255,255,0.7);}
+
+/* PILLS BAR */
+.pills-bar{display:flex;gap:6px;padding:8px 12px;overflow-x:auto;background:#fff;border-bottom:1px solid var(--brd);flex-shrink:0;scrollbar-width:none;}
+.pills-bar::-webkit-scrollbar{display:none;}
+.pill{padding:7px 13px;border-radius:20px;border:1.5px solid var(--brd);font-size:12px;font-weight:600;color:var(--mut);white-space:nowrap;cursor:pointer;background:#fff;font-family:'DM Sans',sans-serif;flex-shrink:0;}
+.pill.on{background:var(--pri);border-color:var(--pri);color:#fff;}
+
+/* CATS */
+.cats-bar{display:flex;gap:10px;padding:8px 12px;overflow-x:auto;background:#fff;border-bottom:1px solid var(--brd);flex-shrink:0;scrollbar-width:none;}
+.cats-bar::-webkit-scrollbar{display:none;}
+.cat-btn{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex-shrink:0;}
+.cat-circle{width:46px;height:46px;border-radius:12px;background:var(--bg);border:1.5px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:20px;transition:all 0.15s;}
+.cat-circle.on{background:var(--pri-lt);border-color:var(--pri);border-width:2px;}
+.cat-name{font-size:9px;font-weight:600;color:var(--mut);}
+.cat-name.on{color:var(--pri);}
+
+/* RADIUS ROW */
+.radius-bar{display:flex;justify-content:space-evenly;padding:6px 8px;background:#fff;border-bottom:1px solid var(--brd);flex-shrink:0;}
+
+/* SAFETY BANNER */
+.safety-wrap{margin:8px 12px 0;padding:10px 12px;background:#FFF8E1;border:1px solid #FFD54F;border-radius:12px;font-size:12px;color:#5D4037;display:flex;gap:8px;align-items:flex-start;flex-shrink:0;}
+.safety-close{margin-left:auto;cursor:pointer;font-size:16px;line-height:1;flex-shrink:0;}
+
+/* AD SLOT */
+.ad-slot{margin:6px 12px;background:#f0f0f0;border-radius:10px;min-height:52px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#bbb;flex-shrink:0;overflow:hidden;}
+
+/* FEED LIST */
+.feed-list{flex:1;overflow-y:auto;padding:8px 12px 88px;}
+
+/* CARD */
+.card{display:flex;align-items:center;background:#fff;border-radius:14px;margin-bottom:8px;padding:10px;border:1px solid var(--brd);gap:10px;cursor:pointer;}
+.card:active{opacity:0.8;}
+.card-thumb{width:70px;height:70px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:26px;}
+.card-thumb img{width:70px;height:70px;border-radius:10px;object-fit:cover;flex-shrink:0;}
+.card-body{flex:1;min-width:0;}
+.card-title{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-price{font-size:13px;font-weight:700;color:var(--pri);margin-top:2px;}
+.card-price.pet{color:#E91E63;}
+.card-price.wanted{color:#FF9800;}
+.card-meta{display:flex;gap:10px;margin-top:4px;font-size:10px;color:var(--mut);}
+.card-fav{font-size:22px;padding:8px 4px;cursor:pointer;flex-shrink:0;}
+.plan-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px;margin-top:3px;}
+.plan-tag.pro{background:#FFF8DC;color:#b37700;}
+.plan-tag.loja{background:#EDE9FE;color:#7c3aed;}
+
+/* BOTTOM NAV */
+.bnav{display:flex;background:#fff;border-top:1px solid var(--brd);padding:8px 0 max(20px,env(safe-area-inset-bottom));flex-shrink:0;}
+.bnav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:2px;}
+.bnav-icon{font-size:22px;opacity:0.35;}
+.bnav-icon.on{opacity:1;}
+.bnav-lbl{font-size:9px;color:#bbb;margin-top:2px;font-weight:600;}
+.bnav-lbl.on{color:var(--pri);}
+.bnav-pub{flex:1;display:flex;align-items:center;justify-content:center;margin-top:-18px;}
+.pub-circle{width:54px;height:54px;border-radius:27px;background:var(--pri);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(45,182,125,0.45);cursor:pointer;}
+
+/* EMPTY STATE */
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;}
+.empty-icon{font-size:56px;margin-bottom:14px;}
+.empty-h{font-size:18px;font-weight:800;margin-bottom:8px;}
+.empty-p{font-size:13px;color:var(--mut);line-height:1.6;}
+
+/* ITEM DETAIL */
+.detail-photos{background:#111;position:relative;flex-shrink:0;}
+.detail-photos img{width:100%;height:280px;object-fit:contain;display:block;}
+.detail-ph{width:100%;height:220px;display:flex;align-items:center;justify-content:center;font-size:64px;background:#f5f5f5;}
+.detail-back{position:absolute;top:50px;left:14px;width:36px;height:36px;border-radius:18px;background:rgba(0,0,0,0.55);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;z-index:10;}
+.photo-nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:16px;background:rgba(0,0,0,0.4);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:10;}
+.photo-dots{position:absolute;bottom:8px;left:0;right:0;display:flex;justify-content:center;gap:5px;}
+.photo-dot{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,0.5);}
+.photo-dot.on{background:#fff;width:14px;}
+.detail-body{padding:16px;overflow-y:auto;flex:1;}
+.detail-title{font-size:20px;font-weight:800;margin-bottom:4px;}
+.detail-price{font-size:26px;font-weight:900;color:var(--pri);margin-bottom:8px;}
+.detail-meta{display:flex;gap:12px;font-size:11px;color:var(--mut);margin-bottom:12px;flex-wrap:wrap;}
+.detail-desc{font-size:14px;color:#444;line-height:1.65;margin-bottom:14px;}
+.seller-card{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:12px;padding:12px;margin-bottom:14px;}
+.seller-av{width:42px;height:42px;border-radius:21px;background:var(--pri-lt);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--pri);flex-shrink:0;overflow:hidden;}
+.seller-av img{width:100%;height:100%;object-fit:cover;}
+.btn-row{display:flex;gap:8px;margin-bottom:10px;}
+.btn-sec{flex:1;background:#fff;border:1.5px solid var(--brd);color:var(--txt);border-radius:12px;padding:11px 8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;}
+.btn-contact{width:100%;background:var(--pri);color:#fff;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:900;display:flex;align-items:flex-end;justify-content:center;}
+.modal{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:430px;max-height:85vh;overflow-y:auto;}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:14px;}
+.safety-item{display:flex;gap:10px;font-size:13px;line-height:1.6;margin-bottom:10px;}
+.safety-warn{background:#FFF8E1;border-radius:10px;padding:12px;font-size:12px;color:#5D4037;margin:12px 0;line-height:1.6;}
+.chk-row{display:flex;align-items:center;gap:10px;margin:14px 0;cursor:pointer;}
+.chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
+.chk.on{background:var(--pri);border-color:var(--pri);color:#fff;}
+
+/* AUTH */
+.auth-body{flex:1;overflow-y:auto;padding:24px 24px 60px;}
+.auth-top{padding-top:56px;text-align:center;margin-bottom:28px;}
+.auth-logo{font-size:60px;margin-bottom:8px;}
+.auth-h{font-size:22px;font-weight:800;}
+.auth-sub{font-size:13px;color:var(--mut);margin-top:4px;}
+label.lbl{display:block;font-size:12px;font-weight:700;margin-bottom:5px;color:var(--txt);}
+.inp{background:#fff;border-radius:12px;padding:13px 14px;font-size:15px;border:1.5px solid var(--brd);width:100%;outline:none;font-family:'DM Sans',sans-serif;color:var(--txt);margin-bottom:14px;}
+.inp:focus{border-color:var(--pri);}
+.inp-hint{font-size:11px;color:var(--mut);margin-top:-10px;margin-bottom:12px;}
+.pw-row{display:flex;gap:8px;align-items:center;margin-bottom:14px;}
+.eye{padding:13px 8px;cursor:pointer;font-size:17px;}
+.btn-pri{background:var(--pri);color:#fff;border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:800;width:100%;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:10px;}
+.btn-out{background:#fff;border:2px solid var(--pri);color:var(--pri);border-radius:14px;padding:15px;font-size:16px;font-weight:800;width:100%;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:10px;}
+.lnk{text-align:center;padding:10px;cursor:pointer;color:var(--mut);font-size:13px;}
+.lnk b{color:var(--pri);}
+.div-or{display:flex;align-items:center;gap:12px;margin:6px 0;}
+.div-line{flex:1;height:1px;background:var(--brd);}
+.skip{text-align:center;padding:14px;cursor:pointer;color:var(--pri);font-size:13px;font-weight:600;}
+
+/* PUBLISH */
+.pub-body{flex:1;overflow-y:auto;padding:14px 14px 100px;}
+.mode-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:15px;border:1.5px solid var(--brd);margin-bottom:8px;cursor:pointer;}
+.mode-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.mode-info h4{font-size:14px;font-weight:800;}
+.mode-info p{font-size:11px;color:var(--mut);margin-top:2px;}
+.photo-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.ph-item{width:78px;height:78px;border-radius:11px;position:relative;overflow:hidden;}
+.ph-item img{width:100%;height:100%;object-fit:cover;}
+.ph-del{position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.6);border-radius:10px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;cursor:pointer;}
+.ph-add{width:78px;height:78px;border-radius:11px;border:2px dashed var(--brd);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--mut);font-size:11px;}
+.ph-add span{font-size:22px;}
+.cats-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.chip{padding:7px 13px;border-radius:20px;border:1.5px solid var(--brd);font-size:12px;font-weight:600;color:var(--mut);cursor:pointer;background:#fff;font-family:'DM Sans',sans-serif;}
+.chip.on{background:var(--pri-lt);border-color:var(--pri);color:var(--pri);}
+.pub-footer{position:absolute;bottom:0;left:0;right:0;padding:10px 14px max(20px,env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--brd);display:flex;gap:8px;}
+.pub-info-bar{background:#EFF9F5;border-radius:10px;padding:10px 12px;font-size:12px;color:#2DB67D;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+
+/* PROFILE */
+.prof-body{flex:1;overflow-y:auto;padding-bottom:80px;}
+.prof-hdr{background:var(--navy);padding:52px 20px 24px;display:flex;align-items:center;gap:14px;}
+.prof-av{width:68px;height:68px;border-radius:34px;background:var(--pri);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0;}
+.prof-av img{width:100%;height:100%;object-fit:cover;}
+.prof-name{font-size:19px;font-weight:800;color:#fff;}
+.prof-plan{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px;}
+.sec-lbl{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:1px;padding:14px 18px 6px;}
+.prof-row{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:#fff;border-bottom:1px solid var(--brd);cursor:pointer;}
+.prof-row-l{font-size:14px;font-weight:600;}
+.prof-row-r{font-size:12px;color:var(--mut);}
+.prof-row.danger .prof-row-l{color:var(--dan);}
+.plan-box{margin:10px 14px;border-radius:16px;padding:18px;border:2px solid var(--brd);}
+.plan-box.pro{border-color:#FFD166;background:#fffdf0;}
+.plan-box.loja{border-color:#8B5CF6;background:#faf8ff;}
+.plan-box h3{font-size:16px;font-weight:800;margin-bottom:3px;}
+.plan-box .plan-price{font-size:26px;font-weight:900;margin-bottom:3px;}
+.plan-box .plan-price.green{color:var(--pri);}
+.plan-box .plan-price.gold{color:#b37700;}
+.plan-box .plan-price.purple{color:#7c3aed;}
+.plan-feat{font-size:12px;color:#555;padding:3px 0;}
+.plan-feat::before{content:'✓ ';color:var(--pri);font-weight:900;}
+.plan-act{display:block;width:100%;padding:13px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:14px;text-align:center;}
+.plan-act.green{background:var(--pri);color:#fff;}
+.plan-act.purple{background:#7c3aed;color:#fff;}
+.plan-act.gray{background:var(--brd);color:var(--mut);}
+
+/* MAP */
+#map-wrap{flex:1;position:relative;}
+#lmap{width:100%;height:100%;}
+.map-legend{display:flex;justify-content:center;gap:14px;padding:5px;background:#fff;border-top:1px solid var(--brd);flex-shrink:0;}
+.legend-dot{width:9px;height:9px;border-radius:50%;}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut);}
+
+/* MY ADS */
+.my-ad-item{display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:10px;margin-bottom:8px;border:1px solid var(--brd);}
+.my-ad-thumb{width:56px;height:56px;border-radius:9px;object-fit:cover;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;}
+.my-ad-thumb img{width:56px;height:56px;object-fit:cover;}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;}
+.status-dot.active{background:#4CAF50;}
+.status-dot.expired{background:#999;}
+
+/* LOADING */
+.loading-full{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+.spinner{width:38px;height:38px;border:4px solid var(--brd);border-top-color:var(--pri);border-radius:50%;animation:spin 0.75s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* TOAST */
+.toast{position:fixed;top:56px;left:50%;transform:translateX(-50%) translateY(-10px);background:rgba(27,35,64,0.95);color:#fff;padding:10px 22px;border-radius:100px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:all 0.25s;pointer-events:none;white-space:nowrap;backdrop-filter:blur(8px);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* MISC */
+textarea.inp{resize:none;height:90px;}
+.form-row{display:flex;gap:10px;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- SCREEN: FEED -->
+  <div id="s-feed" class="screen active">
+    <div class="hdr green">
+      <div class="hdr-row">
+        <div>
+          <div class="hdr-title">Do Vizinho <span style="font-size:12px;font-weight:500;opacity:0.75">— Vendas e doações</span></div>
+        </div>
+        <img src="/assets/icon.png" style="width:34px;height:34px;border-radius:9px;" onerror="this.style.display='none'">
+      </div>
+      <div class="search-wrap">
+        <span style="opacity:0.7">🔍</span>
+        <input id="q" placeholder="Buscar anúncios..." oninput="applyFilters()">
+      </div>
+    </div>
+    <div id="safety-banner" class="safety-wrap">
+      <div>🛡️ <strong>Compre e venda com segurança</strong><br><span style="opacity:0.85">Encontre-se em locais públicos · Nunca envie dinheiro antecipado · Prefira pagamento em mãos</span></div>
+      <div class="safety-close" onclick="this.parentElement.style.display='none'">✕</div>
+    </div>
+    <div class="cats-bar" id="cats-bar"></div>
+    <div class="pills-bar" id="filters-bar"></div>
+    <div class="radius-bar" id="radius-bar"></div>
+    <div class="ad-slot" id="feed-ad"><span>Publicidade</span></div>
+    <div class="feed-list" id="feed-list">
+      <div class="loading-full"><div class="spinner"></div><span style="color:var(--mut);font-size:13px">Carregando...</span></div>
+    </div>
+  </div>
+
+  <!-- SCREEN: MAP -->
+  <div id="s-map" class="screen">
+    <div class="hdr green">
+      <div class="hdr-title">🗺️ Mapa</div>
+      <div class="hdr-sub" id="map-sub">0 anúncios perto de você</div>
+    </div>
+    <div class="cats-bar" id="map-cats"></div>
+    <div class="pills-bar" id="map-filters"></div>
+    <div class="radius-bar" id="map-radius"></div>
+    <div id="map-wrap"><div id="lmap"></div></div>
+    <div class="map-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#2DB67D"></div>Venda</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#4CAF50"></div>Doação</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#FF9800"></div>Procuro</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#E91E63"></div>Pet</div>
+    </div>
+  </div>
+
+  <!-- SCREEN: PUBLISH -->
+  <div id="s-publish" class="screen">
+    <div class="hdr navy">
+      <div class="hdr-title">Publicar</div>
+      <div class="hdr-sub" id="pub-sub">0/10 anúncios ativos · Grátis</div>
+    </div>
+    <div class="pub-body" id="pub-body"></div>
+    <div class="pub-footer" id="pub-footer" style="display:none">
+      <button class="btn-sec" style="flex:1" onclick="resetPub()">Cancelar</button>
+      <button class="btn-pri" style="flex:2;margin-bottom:0" onclick="submitListing()">Publicar anúncio</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: FAVORITES -->
+  <div id="s-favorites" class="screen">
+    <div class="hdr pink">
+      <div class="hdr-title">❤️ Favoritos</div>
+    </div>
+    <div class="feed-list" id="fav-list"></div>
+  </div>
+
+  <!-- SCREEN: PROFILE -->
+  <div id="s-profile" class="screen">
+    <div class="prof-body" id="prof-body"></div>
+  </div>
+
+  <!-- SCREEN: DETAIL -->
+  <div id="s-detail" class="screen">
+    <div id="detail-inner" style="flex:1;overflow-y:auto;padding-bottom:20px;"></div>
+  </div>
+
+  <!-- SCREEN: AUTH -->
+  <div id="s-auth" class="screen">
+    <div class="auth-body" id="auth-body"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav" id="bnav">
+    <div class="bnav-tab" onclick="go('feed')">
+      <div class="bnav-icon on" id="ni-feed">🏠</div>
+      <div class="bnav-lbl on" id="nl-feed">Início</div>
+    </div>
+    <div class="bnav-tab" onclick="go('map')">
+      <div class="bnav-icon" id="ni-map">🗺️</div>
+      <div class="bnav-lbl" id="nl-map">Mapa</div>
+    </div>
+    <div class="bnav-pub" onclick="go('publish')">
+      <div class="pub-circle">➕</div>
+    </div>
+    <div class="bnav-tab" onclick="go('favorites')">
+      <div class="bnav-icon" id="ni-favorites">❤️</div>
+      <div class="bnav-lbl" id="nl-favorites">Favoritos</div>
+    </div>
+    <div class="bnav-tab" onclick="go('profile')">
+      <div class="bnav-icon" id="ni-profile">👤</div>
+      <div class="bnav-lbl" id="nl-profile">Perfil</div>
+    </div>
+  </div>
+
+  <!-- SAFETY MODAL -->
+  <div id="safety-modal" class="overlay" style="display:none">
+    <div class="modal">
+      <div class="modal-title">⚠️ Atenção antes de continuar</div>
+      <div class="safety-item">⚠️ Nunca pague adiantado por produtos</div>
+      <div class="safety-item">📸 Se a foto não conferir com o produto real, desconfie</div>
+      <div class="safety-item">📍 Prefira locais públicos para a entrega</div>
+      <div class="safety-item">💳 Prefira pagamento em mãos, não por Pix antecipado</div>
+      <div class="safety-item">🚨 Use o botão Denunciar se algo parecer suspeito</div>
+      <div class="safety-warn">⚠️ O Do Vizinho é uma plataforma de anúncios. Não nos responsabilizamos por negociações entre usuários.</div>
+      <div class="chk-row" onclick="toggleChk()">
+        <div class="chk" id="safety-chk"></div>
+        <span style="font-size:13px">Li e entendi os avisos de segurança</span>
+      </div>
+      <button class="btn-pri" id="safety-proceed" onclick="doContact()" disabled style="opacity:0.5;margin-bottom:0">Continuar para WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════
+const SB_URL = 'https://qdhunieocngxaujmgumn.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkaHVuaWVvY25neGF1am1ndW1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3NzQzNzMsImV4cCI6MjA4NzM1MDM3M30.9pE4kkyC22VBljy1IDIKBVYZKWQYtGzqsRUK1FM5JLY';
+const sb = supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true } });
+
+const CATS = [
+  {id:'moveis',l:'Móveis',i:'🛋️'},
+  {id:'roupas',l:'Roupas',i:'👕'},
+  {id:'eletro',l:'Eletrônicos',i:'📱'},
+  {id:'casa',l:'Casa',i:'🏠'},
+  {id:'comida',l:'Comida',i:'🍽️'},
+  {id:'adocao',l:'Adoção',i:'🐾'},
+  {id:'brinquedos',l:'Brinquedos',i:'🧸'},
+  {id:'esporte',l:'Esporte',i:'⚽'},
+  {id:'outros',l:'Outros',i:'📦'},
+];
+const FILT = [
+  {id:'todos',l:'🏘️ Todos'},
+  {id:'gratis',l:'🎁 Grátis'},
+  {id:'venda',l:'💰 Venda'},
+  {id:'perdidos',l:'🐾 Pets'},
+  {id:'procuro',l:'🔎 Procuro'},
+  {id:'favoritos',l:'❤️ Salvos'},
+];
+const MODES = [
+  {id:'sell',i:'💰',bg:'#E8F8F0',l:'Vender',s:'Venda itens que não usa mais',t:'sell'},
+  {id:'donate',i:'🎁',bg:'#E8F8F0',l:'Doar',s:'Doe para quem precisa',t:'donate'},
+  {id:'food',i:'🍽️',bg:'#FFF3E0',l:'Comida caseira',s:'Venda ou doe comida',t:'food'},
+  {id:'adopt',i:'🐾',bg:'#FCE4EC',l:'Adoção de pet',s:'Coloque seu pet para adoção',t:'donate'},
+  {id:'wanted',i:'🔎',bg:'#FFF8E1',l:'Procuro item',s:'Procure o que precisa',t:'wanted'},
+  {id:'lost_pet',i:'🚨',bg:'#FCE4EC',l:'Pet perdido',s:'Alerta de pet perdido (GRÁTIS e ilimitado)',t:'lost_pet'},
+];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+const S = {
+  screen:'feed', prevScreen:'feed',
+  filter:'todos', cat:null, radius:5,
+  listings:[], favs:new Set(),
+  user:null, profile:null,
+  query:'',
+  map:null, mapMarkers:[],
+  detail:null, photoIdx:0,
+  safetyItem:null,
+  pubMode:null, pubPhotos:[], pubCat:'',
+  authView:'login',
+  showPass:false, showPass2:false,
+};
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+async function init(){
+  renderBars();
+  await getLocation();
+  await checkAuth();
+  await loadListings();
+  initMap();
+}
+
+async function getLocation(){
+  return new Promise(r=>{
+    if(!navigator.geolocation)return r();
+    navigator.geolocation.getCurrentPosition(p=>{
+      S.userLoc={lat:p.coords.latitude,lng:p.coords.longitude};r();
+    },()=>r(),{timeout:6000});
+  });
+}
+
+async function checkAuth(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(session?.user){S.user=session.user;await loadProfile();await loadFavs();}
+  sb.auth.onAuthStateChange(async(_,session)=>{
+    S.user=session?.user||null;
+    if(S.user){await loadProfile();await loadFavs();}
+    else{S.profile=null;S.favs=new Set();}
+    if(S.screen==='profile')renderProfile();
+  });
+}
+
+async function loadProfile(){
+  if(!S.user)return;
+  const{data}=await sb.from('profiles').select('*').eq('id',S.user.id).single();
+  S.profile=data;
+}
+
+async function loadFavs(){
+  if(!S.user)return;
+  const{data}=await sb.from('favorites').select('listing_id').eq('user_id',S.user.id);
+  S.favs=new Set((data||[]).map(f=>f.listing_id));
+}
+
+async function loadListings(){
+  try{
+    await sb.rpc('expire_old_listings').catch(()=>{});
+    const{data}=await sb.from('listings')
+      .select('*, profiles(name,plan,avatar_url)')
+      .eq('status','active')
+      .order('created_at',{ascending:false});
+    S.listings=data||[];
+  }catch(e){S.listings=[];}
+  applyFilters();
+  updateMapMarkers();
+}
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function go(screen){
+  if(screen===S.screen&&screen!=='detail')return;
+  S.prevScreen=(['detail','auth'].includes(S.screen))?S.prevScreen:S.screen;
+  ['feed','map','publish','favorites','profile','detail','auth'].forEach(s=>{
+    document.getElementById('s-'+s).classList.toggle('active',s===screen);
+  });
+  ['feed','map','favorites','profile'].forEach(s=>{
+    document.getElementById('ni-'+s)?.classList.toggle('on',s===screen);
+    document.getElementById('nl-'+s)?.classList.toggle('on',s===screen);
+  });
+  const noNav=['detail','auth'].includes(screen);
+  document.getElementById('bnav').style.display=noNav?'none':'flex';
+  S.screen=screen;
+  if(screen==='map'){renderMap();}
+  if(screen==='profile')renderProfile();
+  if(screen==='favorites')renderFavs();
+  if(screen==='publish')renderPub();
+  if(screen==='auth')renderAuth();
+}
+
+function goBack(){go(S.prevScreen||'feed');}
+
+// ═══════════════════════════════════════════
+// BARS
+// ═══════════════════════════════════════════
+function renderBars(){
+  // cats
+  const cHtml=CATS.map(c=>`<div class="cat-btn" onclick="setCat('${c.id}')">
+    <div class="cat-circle ${S.cat===c.id?'on':''}" id="cc-${c.id}">${c.i}</div>
+    <div class="cat-name ${S.cat===c.id?'on':''}" id="cn-${c.id}">${c.l}</div>
+  </div>`).join('');
+  document.getElementById('cats-bar').innerHTML=cHtml;
+  document.getElementById('map-cats').innerHTML=cHtml.replace(/onclick="setCat/g,"onclick=\"setMapCat");
+
+  // filters
+  const fHtml=FILT.map(f=>`<div class="pill ${S.filter===f.id?'on':''}" id="fp-${f.id}" onclick="setFilt('${f.id}')">${f.l}</div>`).join('');
+  document.getElementById('filters-bar').innerHTML=fHtml;
+  document.getElementById('map-filters').innerHTML=FILT.filter(f=>f.id!=='favoritos').map(f=>
+    `<div class="pill ${S.filter===f.id?'on':''}" id="mfp-${f.id}" onclick="setMapFilt('${f.id}')">${f.l}</div>`
+  ).join('');
+
+  // radius
+  const rHtml=[0.5,1,2,3,5].map(r=>`<div class="pill ${S.radius===r?'on':''}" id="rp-${r}" onclick="setRadius(${r})">${r<1?r*1000+'m':r+'km'}</div>`).join('');
+  document.getElementById('radius-bar').innerHTML=rHtml;
+  document.getElementById('map-radius').innerHTML=rHtml;
+}
+
+function setCat(id){
+  S.cat=S.cat===id?null:id;
+  CATS.forEach(c=>{
+    document.getElementById('cc-'+c.id)?.classList.toggle('on',S.cat===c.id);
+    document.getElementById('cn-'+c.id)?.classList.toggle('on',S.cat===c.id);
+  });
+  applyFilters();
+}
+
+function setMapCat(id){setCat(id);updateMapMarkers();}
+
+function setFilt(id){
+  S.filter=id;S.cat=null;
+  document.querySelectorAll('[id^="fp-"]').forEach(el=>el.classList.remove('on'));
+  document.getElementById('fp-'+id)?.classList.add('on');
+  const showCats=id==='todos';
+  document.getElementById('cats-bar').style.display=showCats?'flex':'none';
+  if(!showCats)CATS.forEach(c=>{document.getElementById('cc-'+c.id)?.classList.remove('on');document.getElementById('cn-'+c.id)?.classList.remove('on');});
+  applyFilters();
+}
+
+function setMapFilt(id){
+  S.filter=id;S.cat=null;
+  document.querySelectorAll('[id^="mfp-"]').forEach(el=>el.classList.remove('on'));
+  document.getElementById('mfp-'+id)?.classList.add('on');
+  document.querySelectorAll('[id^="fp-"]').forEach(el=>el.classList.remove('on'));
+  document.getElementById('fp-'+id)?.classList.add('on');
+  updateMapMarkers();applyFilters();
+}
+
+function setRadius(r){
+  S.radius=r;
+  document.querySelectorAll('[id^="rp-"]').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll(`[id="rp-${r}"]`).forEach(el=>el.classList.add('on'));
+  applyFilters();updateMapMarkers();
+}
+
+// ═══════════════════════════════════════════
+// FEED
+// ═══════════════════════════════════════════
+function applyFilters(){
+  S.query=document.getElementById('q')?.value||'';
+  const items=getFiltered();
+  const list=document.getElementById('feed-list');
+  if(!items.length){
+    list.innerHTML=`<div class="empty"><div class="empty-icon">📦</div><div class="empty-h">Nenhum anúncio</div><div class="empty-p">Tente mudar o filtro ou aumentar o raio de busca.</div></div>`;
+    return;
+  }
+  list.innerHTML=items.map((item,idx)=>{
+    const ad=idx>0&&idx%5===0?`<div class="ad-slot"><span>Publicidade</span></div>`:'';
+    return ad+cardHtml(item);
+  }).join('');
+}
+
+function getFiltered(){
+  let items=[...S.listings];
+  if(S.userLoc){
+    items=items.map(i=>({...i,_dist:(i.latitude&&i.longitude)?dist(S.userLoc.lat,S.userLoc.lng,+i.latitude,+i.longitude):null}));
+    items=items.filter(i=>i._dist===null||i._dist<=S.radius);
+  }
+  if(S.filter==='gratis')items=items.filter(i=>i.price===0&&i.type!=='wanted'&&i.type!=='lost_pet');
+  else if(S.filter==='venda')items=items.filter(i=>i.price>0&&i.type!=='wanted'&&i.type!=='lost_pet');
+  else if(S.filter==='perdidos')items=items.filter(i=>i.type==='lost_pet');
+  else if(S.filter==='procuro')items=items.filter(i=>i.type==='wanted');
+  else if(S.filter==='favoritos')items=items.filter(i=>S.favs.has(i.id));
+  else items=items.filter(i=>i.type!=='lost_pet'&&i.type!=='wanted');
+  if(S.cat&&S.filter==='todos')items=items.filter(i=>i.category===S.cat);
+  if(S.query.trim()){
+    const ws=S.query.toLowerCase().split(' ').filter(Boolean);
+    items=items.filter(i=>ws.every(w=>(i.title+' '+(i.description||'')).toLowerCase().includes(w)));
+  }
+  return items;
+}
+
+function cardHtml(item){
+  const isPet=item.type==='lost_pet',isWanted=item.type==='wanted';
+  const cat=CATS.find(c=>c.id===item.category);
+  const thumb=item.photos?.length
+    ?`<img src="${item.photos[0]}" style="width:70px;height:70px;border-radius:10px;object-fit:cover;flex-shrink:0;" loading="lazy">`
+    :`<div class="card-thumb">${isPet?'🐾':isWanted?'🔎':cat?.i||'📦'}</div>`;
+  const priceLbl=isPet?'<span class="card-price pet">🐾 Pet perdido</span>':isWanted?'<span class="card-price wanted">🔎 Procuro</span>':item.price===0?'<span class="card-price">🎁 Grátis</span>':`<span class="card-price">R$ ${item.price}</span>`;
+  const distLbl=item._dist!=null?`<span>📍 ${fmtDist(item._dist)}</span>`:'';
+  const plan=item.profiles?.plan;
+  const planTag=plan==='loja'?`<div class="plan-tag loja">🏪 ${item.profiles?.name||'Loja'}</div>`:plan==='pro'?`<div class="plan-tag pro">⭐ Pro</div>`:'';
+  const fav=S.favs.has(item.id);
+  return `<div class="card" onclick="openDetail('${item.id}')">
+    ${thumb}
+    <div class="card-body">
+      <div class="card-title">${item.title}</div>
+      ${priceLbl}${planTag}
+      <div class="card-meta">${distLbl}<span>⏱️ ${ago(item.created_at)}</span></div>
+    </div>
+    <div class="card-fav" onclick="event.stopPropagation();toggleFav('${item.id}')">${fav?'❤️':'🤍'}</div>
+  </div>`;
+}
+
+async function toggleFav(id){
+  if(!S.user){showToast('Faça login para salvar favoritos');return;}
+  if(S.favs.has(id)){
+    S.favs.delete(id);
+    await sb.from('favorites').delete().eq('user_id',S.user.id).eq('listing_id',id);
+  }else{
+    S.favs.add(id);
+    await sb.from('favorites').insert({user_id:S.user.id,listing_id:id});
+  }
+  applyFilters();
+  if(S.screen==='favorites')renderFavs();
+}
+
+// ═══════════════════════════════════════════
+// ITEM DETAIL
+// ═══════════════════════════════════════════
+function openDetail(id){
+  const item=S.listings.find(i=>i.id===id);if(!item)return;
+  item._dist=S.userLoc&&item.latitude?dist(S.userLoc.lat,S.userLoc.lng,+item.latitude,+item.longitude):null;
+  S.detail=item;S.photoIdx=0;
+  renderDetail();go('detail');
+}
+
+function renderDetail(){
+  const item=S.detail;
+  const photos=item.photos||[];
+  const isPet=item.type==='lost_pet',isWanted=item.type==='wanted';
+  const cat=CATS.find(c=>c.id===item.category);
+  const priceLbl=isPet?'🐾 Pet perdido':isWanted?'🔎 Procuro':item.price===0?'🎁 Grátis':'R$ '+item.price;
+  const priceColor=isPet?'#E91E63':isWanted?'#FF9800':'var(--pri)';
+  const sellerName=item.profiles?.name||'Vizinho';
+  const sellerInit=(sellerName[0]||'V').toUpperCase();
+  const plan=item.profiles?.plan;
+  const planTag=plan==='loja'?`<span class="plan-tag loja">🏪 Loja</span>`:plan==='pro'?`<span class="plan-tag pro">⭐ Pro</span>`:'';
+  const fav=S.favs.has(item.id);
+
+  const photoHtml=photos.length?`
+    <div class="detail-photos">
+      <div class="detail-back" onclick="goBack()">←</div>
+      <img id="det-img" src="${photos[S.photoIdx]}" style="width:100%;height:280px;object-fit:contain;background:#111;display:block;">
+      ${photos.length>1?`
+        <div class="photo-nav" style="left:8px" onclick="chPhoto(-1)">‹</div>
+        <div class="photo-nav" style="right:8px" onclick="chPhoto(1)">›</div>
+        <div class="photo-dots">${photos.map((_,i)=>`<div class="photo-dot ${i===S.photoIdx?'on':''}"></div>`).join('')}</div>
+      `:''}
+    </div>`
+  :`<div class="detail-ph"><div class="detail-back" onclick="goBack()">←</div>${cat?.i||'📦'}</div>`;
+
+  document.getElementById('detail-inner').innerHTML=`
+    ${photoHtml}
+    <div class="detail-body">
+      <div class="detail-title">${item.title}</div>
+      <div class="detail-price" style="color:${priceColor}">${priceLbl}</div>
+      <div class="detail-meta">
+        ${item._dist!=null?`<span>📍 ${fmtDist(item._dist)}</span>`:''}
+        <span>⏱️ ${ago(item.created_at)}</span>
+        ${item.neighborhood?`<span>🏘️ ${item.neighborhood}</span>`:''}
+        ${item.category?`<span>${cat?.i||''} ${cat?.l||item.category}</span>`:''}
+      </div>
+      ${item.description?`<div class="detail-desc">${item.description}</div>`:''}
+      <div class="seller-card">
+        <div class="seller-av">${item.profiles?.avatar_url?`<img src="${item.profiles.avatar_url}">`:`${sellerInit}`}</div>
+        <div>
+          <div style="font-size:14px;font-weight:700">${sellerName}</div>
+          ${planTag}
+        </div>
+      </div>
+      <div class="btn-row">
+        <div class="btn-sec" id="fav-btn" onclick="toggleFav('${item.id}');renderDetail()">${fav?'❤️ Salvo':'🤍 Salvar'}</div>
+        <div class="btn-sec" onclick="shareItem('${item.id}')">📤 Compartilhar</div>
+        <div class="btn-sec" onclick="reportItem('${item.id}')">🚨 Denunciar</div>
+      </div>
+      <div class="ad-slot" style="margin:0 0 12px"><span>Publicidade</span></div>
+      <button class="btn-contact" onclick="openSafety('${item.id}')">💬 Entrar em contato via WhatsApp</button>
+    </div>`;
+}
+
+function chPhoto(d){
+  const photos=S.detail?.photos||[];
+  if(photos.length<=1)return;
+  S.photoIdx=(S.photoIdx+d+photos.length)%photos.length;
+  document.getElementById('det-img').src=photos[S.photoIdx];
+  renderDetail();
+}
+
+function shareItem(id){
+  const item=S.listings.find(i=>i.id===id);if(!item)return;
+  const url='https://dovizinho.com.br/app';
+  const txt=`${item.title} — ${item.price>0?'R$ '+item.price:'Grátis'} no Do Vizinho! Acesse: ${url}`;
+  if(navigator.share)navigator.share({text:txt});
+  else{navigator.clipboard?.writeText(txt);showToast('Link copiado!');}
+}
+
+async function reportItem(id){
+  if(!S.user){showToast('Faça login para denunciar');return;}
+  const reason=prompt('Motivo da denúncia:');
+  if(!reason)return;
+  await sb.from('reports').insert({reporter_id:S.user.id,target_id:id,reason});
+  showToast('Denúncia enviada. Obrigado!');
+}
+
+// ═══════════════════════════════════════════
+// SAFETY MODAL
+// ═══════════════════════════════════════════
+function openSafety(id){
+  S.safetyItem=S.listings.find(i=>i.id===id);
+  document.getElementById('safety-chk').classList.remove('on');
+  document.getElementById('safety-chk').innerHTML='';
+  const btn=document.getElementById('safety-proceed');
+  btn.disabled=true;btn.style.opacity='0.5';
+  document.getElementById('safety-modal').style.display='flex';
+}
+
+function toggleChk(){
+  const chk=document.getElementById('safety-chk');
+  const on=!chk.classList.contains('on');
+  chk.classList.toggle('on',on);chk.innerHTML=on?'✓':'';
+  const btn=document.getElementById('safety-proceed');
+  btn.disabled=!on;btn.style.opacity=on?'1':'0.5';
+}
+
+async function doContact(){
+  document.getElementById('safety-modal').style.display='none';
+  const item=S.safetyItem;if(!item)return;
+  if(!S.user){showToast('Faça login para entrar em contato');S.prevScreen='detail';go('auth');return;}
+  let phone=item.phone||null;
+  if(item.user_id){
+    const{data}=await sb.from('profiles').select('phone').eq('id',item.user_id).single();
+    if(data?.phone)phone=data.phone;
+  }
+  if(!phone){showToast('Vendedor sem WhatsApp cadastrado');return;}
+  const isPet=item.type==='lost_pet',isWanted=item.type==='wanted';
+  const msg=isPet?`Olá! Vi seu anúncio de pet perdido "${item.title}" no Do Vizinho.`
+    :isWanted?`Olá! Vi que você procura "${item.title}" no Do Vizinho. Tenho disponível!`
+    :`Olá! Vi seu anúncio "${item.title}" no Do Vizinho e tenho interesse!`;
+  window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// ═══════════════════════════════════════════
+// MAP
+// ═══════════════════════════════════════════
+function initMap(){
+  if(S.map)return;
+  const lat=S.userLoc?.lat||-23.5505,lng=S.userLoc?.lng||-46.6333;
+  S.map=L.map('lmap',{zoomControl:false}).setView([lat,lng],14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'©OSM',maxZoom:19}).addTo(S.map);
+}
+
+function renderMap(){
+  setTimeout(()=>{S.map?.invalidateSize();updateMapMarkers();},250);
+}
+
+function updateMapMarkers(){
+  if(!S.map)return;
+  S.mapMarkers.forEach(m=>{try{S.map.removeLayer(m);}catch(e){}});
+  S.mapMarkers=[];
+  const items=getFiltered();
+  const cnt=items.length;
+  document.getElementById('map-sub').textContent=`${cnt} anúncio${cnt!==1?'s':''} perto de você • ${S.radius}km`;
+  if(S.userLoc){
+    const um=L.marker([S.userLoc.lat,S.userLoc.lng],{icon:L.divIcon({className:'',html:'<div style="width:18px;height:18px;border-radius:50%;background:#4285F4;border:3px solid #fff;box-shadow:0 0 0 8px rgba(66,133,244,0.2)"></div>',iconSize:[18,18],iconAnchor:[9,9]})}).addTo(S.map);
+    S.mapMarkers.push(um);
+    const circle=L.circle([S.userLoc.lat,S.userLoc.lng],{radius:S.radius*1000,color:'#2DB67D',fillColor:'#2DB67D',fillOpacity:0.07,weight:2,dashArray:'8,8'}).addTo(S.map);
+    S.mapMarkers.push(circle);
+    S.map.setView([S.userLoc.lat,S.userLoc.lng],S.radius<=1?16:S.radius<=2?15:S.radius<=3?14:13);
+  }
+  items.forEach(item=>{
+    if(!item.latitude||!item.longitude)return;
+    const color=item.type==='donate'?'#4CAF50':item.type==='lost_pet'?'#E91E63':item.type==='wanted'?'#FF9800':'#2DB67D';
+    const emoji=item.type==='lost_pet'?'🐾':item.type==='wanted'?'🔎':item.type==='donate'?'🎁':'💰';
+    const price=item.price>0?'R$'+item.price:item.type==='wanted'?'Procuro':item.type==='lost_pet'?'Pet!':'Grátis';
+    const t2=(item.title||'').substring(0,14)+(item.title?.length>14?'..':'');
+    const html=`<div style="background:#fff;border-radius:10px;border:2px solid ${color};box-shadow:0 2px 10px rgba(0,0,0,0.22);font-family:sans-serif;min-width:80px;max-width:120px;cursor:pointer;position:relative;overflow:visible">
+      <div style="padding:5px 8px 3px;font-size:11px;font-weight:700;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${emoji} ${t2}</div>
+      <div style="background:${color};color:#fff;font-size:10px;font-weight:800;text-align:center;padding:3px 8px">${price}</div>
+      <div style="position:absolute;bottom:-7px;left:50%;margin-left:-7px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:7px solid ${color}"></div>
+    </div>`;
+    const marker=L.marker([+item.latitude,+item.longitude],{icon:L.divIcon({className:'',html,iconSize:[null,null],iconAnchor:[50,58]})}).on('click',()=>openDetail(item.id)).addTo(S.map);
+    S.mapMarkers.push(marker);
+  });
+}
+
+// ═══════════════════════════════════════════
+// FAVORITES
+// ═══════════════════════════════════════════
+function renderFavs(){
+  const list=document.getElementById('fav-list');
+  if(!S.user){
+    list.innerHTML=`<div class="empty"><div class="empty-icon">🔒</div><div class="empty-h">Faça login</div><div class="empty-p">Para salvar favoritos você precisa estar logado.</div><br><button class="btn-pri" style="max-width:260px" onclick="go('auth')">Entrar ou cadastrar</button></div>`;
+    return;
+  }
+  const items=S.listings.filter(i=>S.favs.has(i.id));
+  if(!items.length){
+    list.innerHTML=`<div class="empty"><div class="empty-icon">❤️</div><div class="empty-h">Nenhum favorito</div><div class="empty-p">Toque no ♡ em qualquer anúncio para salvar aqui.</div><br><button class="btn-pri" style="max-width:260px" onclick="go('feed')">Explorar anúncios</button></div>`;
+    return;
+  }
+  list.innerHTML=`<div style="padding:8px 12px 80px">${items.map(i=>cardHtml(i)).join('')}</div>`;
+}
+
+// ═══════════════════════════════════════════
+// PUBLISH
+// ═══════════════════════════════════════════
+function renderPub(){
+  const body=document.getElementById('pub-body');
+  if(!S.user){
+    body.innerHTML=`<div class="empty"><div class="empty-icon">🔒</div><div class="empty-h">Faça login para publicar</div><br><button class="btn-pri" style="max-width:260px" onclick="go('auth')">Entrar ou cadastrar</button></div>`;
+    document.getElementById('pub-footer').style.display='none';
+    return;
+  }
+  if(!S.pubMode){
+    const plan=S.profile?.plan||'free';
+    const maxAds=plan==='free'?10:plan==='pro'?30:200;
+    document.getElementById('pub-sub').textContent=`0/${maxAds} anúncios ativos · ${plan==='free'?'Grátis':plan==='pro'?'⭐ Pro':'🏪 Loja'}`;
+    body.innerHTML=`
+      <div class="pub-info-bar">⏰ Anúncios ficam ativos por 30 dias.</div>
+      ${MODES.map(m=>`<div class="mode-item" onclick="selMode('${m.id}')">
+        <div class="mode-icon" style="background:${m.bg}">${m.i}</div>
+        <div class="mode-info"><h4>${m.l}</h4><p>${m.s}</p></div>
+        <span style="color:#ccc;font-size:20px">›</span>
+      </div>`).join('')}`;
+    document.getElementById('pub-footer').style.display='none';
+    return;
+  }
+  renderPubForm();
+  document.getElementById('pub-footer').style.display='flex';
+}
+
+function selMode(id){S.pubMode=id;S.pubPhotos=[];S.pubCat='';renderPub();}
+function resetPub(){S.pubMode=null;S.pubPhotos=[];renderPub();}
+
+function renderPubForm(){
+  const m=MODES.find(x=>x.id===S.pubMode);
+  const plan=S.profile?.plan||'free';
+  const maxPh=plan==='loja'?5:plan==='pro'?3:1;
+  const showPrice=['sell','food'].includes(S.pubMode);
+  const showCat=!['lost_pet','food','adopt'].includes(S.pubMode);
+  document.getElementById('pub-body').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="font-size:28px">${m.i}</div>
+      <div style="font-size:17px;font-weight:800">${m.l}</div>
+    </div>
+    <label class="lbl">Fotos (máx. ${maxPh})</label>
+    <div class="photo-grid" id="ph-grid"></div>
+    <label class="lbl">Título *</label>
+    <input class="inp" id="pub-title" placeholder="Ex: Sofá 3 lugares" maxlength="60">
+    <label class="lbl">Descrição</label>
+    <textarea class="inp" id="pub-desc" placeholder="Descreva o item..."></textarea>
+    ${showPrice?`<label class="lbl">Preço (R$) — 0 para grátis</label><input class="inp" id="pub-price" type="number" min="0" placeholder="0.00">`:``}
+    ${showCat?`<label class="lbl">Categoria</label><div class="cats-chips" id="pub-chips"></div>`:``}`;
+  renderPhGrid(maxPh);
+  if(showCat)renderPubChips();
+}
+
+function renderPhGrid(maxPh){
+  const g=document.getElementById('ph-grid');if(!g)return;
+  g.innerHTML=S.pubPhotos.map((p,i)=>`<div class="ph-item"><img src="${p}"><div class="ph-del" onclick="rmPhoto(${i})">✕</div></div>`).join('')
+    +(S.pubPhotos.length<maxPh?`<div class="ph-add" onclick="addPhoto()"><span>📷</span>Foto</div>`:'');
+}
+
+function renderPubChips(){
+  const el=document.getElementById('pub-chips');if(!el)return;
+  el.innerHTML=CATS.map(c=>`<div class="chip ${S.pubCat===c.id?'on':''}" onclick="setPubCat('${c.id}')">${c.i} ${c.l}</div>`).join('');
+}
+
+function setPubCat(id){S.pubCat=id;renderPubChips();}
+function rmPhoto(i){S.pubPhotos.splice(i,1);const plan=S.profile?.plan||'free';renderPhGrid(plan==='loja'?5:plan==='pro'?3:1);}
+
+function addPhoto(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{S.pubPhotos.push(ev.target.result);const plan=S.profile?.plan||'free';renderPhGrid(plan==='loja'?5:plan==='pro'?3:1);};
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+}
+
+async function submitListing(){
+  const title=document.getElementById('pub-title')?.value?.trim();
+  if(!title){showToast('Título é obrigatório');return;}
+  const btn=document.querySelector('#pub-footer .btn-pri');
+  btn.textContent='Publicando...';btn.disabled=true;
+  try{
+    const photoUrls=[];
+    for(const dataUrl of S.pubPhotos){
+      const blob=await fetch(dataUrl).then(r=>r.blob());
+      const name=`listings/${Date.now()}_${Math.random().toString(36).substr(2,6)}.jpg`;
+      const{data,error}=await sb.storage.from('photos').upload(name,blob,{contentType:'image/jpeg'});
+      if(!error){const{data:ud}=sb.storage.from('photos').getPublicUrl(name);photoUrls.push(ud.publicUrl);}
+    }
+    const modeObj=MODES.find(x=>x.id===S.pubMode);
+    const{error}=await sb.from('listings').insert({
+      user_id:S.user.id,
+      title,
+      description:document.getElementById('pub-desc')?.value||'',
+      price:parseFloat(document.getElementById('pub-price')?.value||0)||0,
+      category:S.pubCat||'outros',
+      type:modeObj?.t||'sell',
+      photos:photoUrls,
+      latitude:S.userLoc?.lat,
+      longitude:S.userLoc?.lng,
+      neighborhood:'Próximo',
+    });
+    if(error)throw error;
+    showToast('✅ Anúncio publicado!');
+    resetPub();await loadListings();
+  }catch(e){showToast('Erro: '+e.message);}
+  finally{btn.textContent='Publicar anúncio';btn.disabled=false;}
+}
+
+// ═══════════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════════
+function renderProfile(){
+  const el=document.getElementById('prof-body');
+  if(!S.user||!S.profile){
+    el.innerHTML=`<div style="padding:52px 20px;text-align:center">
+      <div style="font-size:60px;margin-bottom:14px">👤</div>
+      <div style="font-size:20px;font-weight:800;margin-bottom:8px">Faça login</div>
+      <div style="font-size:13px;color:var(--mut);margin-bottom:22px">Para acessar seu perfil, anúncios e favoritos</div>
+      <button class="btn-pri" onclick="go('auth')">Entrar ou cadastrar</button>
+    </div>`;
+    return;
+  }
+  const p=S.profile;
+  const plan=p.plan||'free';
+  const planName=plan==='free'?'Grátis':plan==='pro'?'⭐ Pro':'🏪 Loja';
+  const init=(p.name||'V')[0].toUpperCase();
+  el.innerHTML=`
+    <div class="prof-hdr">
+      <div class="prof-av">${p.avatar_url?`<img src="${p.avatar_url}">`:`${init}`}</div>
+      <div><div class="prof-name">${p.name||'Vizinho'}</div><div class="prof-plan">${planName}</div></div>
+    </div>
+    <div class="sec-lbl">Planos</div>
+    <div style="padding:0 12px">
+      <div class="plan-box pro" style="margin-bottom:8px">
+        <h3>⭐ Pro</h3>
+        <div class="plan-price gold">R$ 4,90<span style="font-size:14px;font-weight:400;color:#999">/mês</span></div>
+        <div class="plan-feat">30 anúncios ativos</div>
+        <div class="plan-feat">3 fotos por anúncio</div>
+        <div class="plan-feat">Badge Pro no perfil</div>
+        <div class="plan-feat">Suporte via WhatsApp</div>
+        <button class="plan-act ${plan==='pro'?'gray':'green'}">${plan==='pro'?'Plano atual':'Assinar Pro — R$ 4,90/mês'}</button>
+      </div>
+      <div class="plan-box loja">
+        <h3>🏪 Loja</h3>
+        <div class="plan-price purple">R$ 29,90<span style="font-size:14px;font-weight:400;color:#999">/mês</span></div>
+        <div class="plan-feat">200 anúncios ativos</div>
+        <div class="plan-feat">5 fotos por anúncio</div>
+        <div class="plan-feat">Nome da loja em destaque</div>
+        <div class="plan-feat">Badge Loja no feed</div>
+        <div class="plan-feat">Suporte prioritário</div>
+        <button class="plan-act ${plan==='loja'?'gray':'purple'}">${plan==='loja'?'Plano atual':'Abrir minha loja — R$ 29,90/mês'}</button>
+      </div>
+    </div>
+    <div class="sec-lbl">Meus anúncios</div>
+    <div id="my-ads" style="padding:0 12px"><div class="spinner" style="margin:12px auto"></div></div>
+    <div class="sec-lbl">Conta</div>
+    <div class="prof-row"><div class="prof-row-l">📱 WhatsApp</div><div class="prof-row-r">${p.phone?'+'+p.phone:'Não cadastrado'}</div></div>
+    <div class="prof-row"><div class="prof-row-l">✉️ E-mail</div><div class="prof-row-r">${S.user.email||''}</div></div>
+    <div class="sec-lbl">Sobre</div>
+    <div class="prof-row"><div class="prof-row-l">Versão</div><div class="prof-row-r">PWA 1.0</div></div>
+    <div class="prof-row" onclick="window.open('/privacy','_blank')"><div class="prof-row-l" style="color:var(--pri)">Política de Privacidade</div><div class="prof-row-r">↗</div></div>
+    <div class="sec-lbl">Conta</div>
+    <div class="prof-row" onclick="doSignOut()"><div class="prof-row-l danger" style="color:var(--dan)">Sair</div><div class="prof-row-r">→</div></div>
+    <div class="prof-row danger" onclick="doDeleteAccount()"><div class="prof-row-l">🗑️ Excluir minha conta</div><div class="prof-row-r">↗</div></div>
+  `;
+  loadMyAds();
+}
+
+async function loadMyAds(){
+  const el=document.getElementById('my-ads');if(!el||!S.user)return;
+  const{data}=await sb.from('listings').select('*').eq('user_id',S.user.id).order('created_at',{ascending:false}).limit(20);
+  if(!data?.length){el.innerHTML=`<div style="padding:12px;color:var(--mut);font-size:13px">Nenhum anúncio publicado ainda.</div>`;return;}
+  el.innerHTML=data.map(item=>{
+    const active=item.status==='active';
+    const thumb=item.photos?.length?`<img src="${item.photos[0]}">`:`<div style="font-size:22px">${CATS.find(c=>c.id===item.category)?.i||'📦'}</div>`;
+    return `<div class="my-ad-item">
+      <div class="my-ad-thumb">${thumb}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.title}</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:2px"><span class="status-dot ${active?'active':'expired'}"></span>${active?'Ativo':'Expirado'} · ${ago(item.created_at)}</div>
+      </div>
+      ${active?`<div style="cursor:pointer;color:var(--dan);font-size:20px;padding:4px" onclick="delMyAd('${item.id}')">🗑️</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function delMyAd(id){
+  if(!confirm('Remover este anúncio?'))return;
+  await sb.from('listings').delete().eq('id',id);
+  showToast('Anúncio removido');await loadListings();loadMyAds();
+}
+
+async function doSignOut(){
+  if(!confirm('Deseja sair?'))return;
+  await sb.auth.signOut();S.user=null;S.profile=null;S.favs=new Set();
+  go('feed');showToast('Até logo!');
+}
+
+async function doDeleteAccount(){
+  if(!confirm('Tem certeza? Todos os seus dados serão excluídos permanentemente.'))return;
+  if(!confirm('Confirme: excluir conta definitivamente?'))return;
+  try{
+    const id=S.user.id;
+    await sb.from('reports').delete().eq('reporter_id',id);
+    await sb.from('favorites').delete().eq('user_id',id);
+    await sb.from('listings').delete().eq('user_id',id);
+    await sb.from('profiles').delete().eq('id',id);
+    await sb.rpc('delete_user');
+    await sb.auth.signOut();
+    S.user=null;S.profile=null;
+    go('feed');showToast('Conta excluída');
+  }catch(e){showToast('Erro ao excluir conta');}
+}
+
+// ═══════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════
+function renderAuth(){
+  const el=document.getElementById('auth-body');
+  if(S.authView==='register'){
+    el.innerHTML=`<div class="auth-top"><div class="auth-logo">🏘️</div><div class="auth-h">Do Vizinho</div><div class="auth-sub">Criar conta gratuita</div></div>
+      <label class="lbl">Nome *</label>
+      <input class="inp" id="rg-name" placeholder="Seu nome" maxlength="40">
+      <label class="lbl">E-mail *</label>
+      <input class="inp" id="rg-email" type="email" placeholder="seu@email.com">
+      <label class="lbl">Senha *</label>
+      <div class="pw-row"><input class="inp" id="rg-pass" type="password" placeholder="Mínimo 6 caracteres" style="flex:1;margin:0"><div class="eye" onclick="tgPass('rg-pass')">👁️</div></div>
+      <div style="margin-top:10px"></div>
+      <label class="lbl">WhatsApp *</label>
+      <input class="inp" id="rg-phone" type="tel" placeholder="+5511999999999" value="+">
+      <div class="inp-hint">Com código do país. Ex: +55 Brasil, +1 EUA</div>
+      <button class="btn-pri" id="rg-btn" onclick="doRegister()">Criar conta</button>
+      <div class="lnk" onclick="S.authView='login';renderAuth()">Já tem conta? <b>Fazer login</b></div>`;
+  }else if(S.authView==='forgot'){
+    el.innerHTML=`<div class="auth-top"><div class="auth-logo">🏘️</div><div class="auth-h">Recuperar senha</div><div class="auth-sub">Enviaremos um link por e-mail</div></div>
+      <label class="lbl">E-mail</label>
+      <input class="inp" id="fg-email" type="email" placeholder="seu@email.com">
+      <button class="btn-pri" onclick="doForgot()">Enviar link</button>
+      <div class="lnk" onclick="S.authView='login';renderAuth()">Voltar ao login</div>`;
+  }else{
+    el.innerHTML=`<div class="auth-top"><div class="auth-logo">🏘️</div><div class="auth-h">Do Vizinho</div><div class="auth-sub">Compre, venda e doe no seu bairro</div></div>
+      <label class="lbl">E-mail</label>
+      <input class="inp" id="ln-email" type="email" placeholder="seu@email.com">
+      <label class="lbl">Senha</label>
+      <div class="pw-row"><input class="inp" id="ln-pass" type="password" placeholder="Sua senha" style="flex:1;margin:0"><div class="eye" onclick="tgPass('ln-pass')">👁️</div></div>
+      <div style="margin-top:10px"></div>
+      <button class="btn-pri" id="ln-btn" onclick="doLogin()">Entrar</button>
+      <div class="lnk" onclick="S.authView='forgot';renderAuth()">Esqueci minha senha</div>
+      <div class="div-or"><div class="div-line"></div><span style="font-size:12px;color:var(--mut);padding:0 12px">ou</span><div class="div-line"></div></div>
+      <button class="btn-out" onclick="S.authView='register';renderAuth()">Criar conta grátis</button>
+      <div class="skip" onclick="goBack()">Apenas navegar →</div>`;
+  }
+}
+
+function tgPass(id){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';}
+
+async function doLogin(){
+  const email=document.getElementById('ln-email')?.value?.trim();
+  const pass=document.getElementById('ln-pass')?.value;
+  if(!email||!pass){showToast('Preencha e-mail e senha');return;}
+  const btn=document.getElementById('ln-btn');btn.textContent='Entrando...';btn.disabled=true;
+  const{error}=await sb.auth.signInWithPassword({email:email.toLowerCase(),password:pass});
+  btn.textContent='Entrar';btn.disabled=false;
+  if(error){showToast('E-mail ou senha incorretos');return;}
+  await checkAuth();go(S.prevScreen||'feed');
+}
+
+async function doRegister(){
+  const name=document.getElementById('rg-name')?.value?.trim();
+  const email=document.getElementById('rg-email')?.value?.trim();
+  const pass=document.getElementById('rg-pass')?.value;
+  const phone=document.getElementById('rg-phone')?.value?.replace(/\D/g,'');
+  if(!name||name.length<2){showToast('Nome muito curto');return;}
+  if(!email||!email.includes('@')){showToast('E-mail inválido');return;}
+  if(!pass||pass.length<6){showToast('Senha muito curta (mín. 6)');return;}
+  if(!phone||phone.length<7||phone.length>15){showToast('WhatsApp inválido');return;}
+  const{data:ex}=await sb.from('profiles').select('id').eq('phone',phone).maybeSingle();
+  if(ex){showToast('WhatsApp já cadastrado');return;}
+  const btn=document.getElementById('rg-btn');btn.textContent='Cadastrando...';btn.disabled=true;
+  const{data,error}=await sb.auth.signUp({email:email.toLowerCase(),password:pass,options:{data:{name,phone}}});
+  if(error){btn.textContent='Criar conta';btn.disabled=false;showToast(error.message.includes('already')? 'E-mail já cadastrado':error.message);return;}
+  if(data.user)await sb.from('profiles').upsert({id:data.user.id,name,phone});
+  btn.textContent='Criar conta';btn.disabled=false;
+  await checkAuth();go(S.prevScreen||'feed');
+}
+
+async function doForgot(){
+  const email=document.getElementById('fg-email')?.value?.trim();
+  if(!email){showToast('Digite seu e-mail');return;}
+  await sb.auth.resetPasswordForEmail(email.toLowerCase(),{redirectTo:'https://dovizinho.com.br/reset-password'});
+  showToast('Link enviado! Verifique seu e-mail.');
+  S.authView='login';renderAuth();
+}
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+function dist(lat1,lon1,lat2,lon2){
+  const R=6371,dL=(lat2-lat1)*Math.PI/180,dLn=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dL/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLn/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function fmtDist(km){if(km<0.1)return'Aqui perto';if(km<1)return(km*1000).toFixed(0)+'m';return km.toFixed(1)+'km';}
+function ago(date){
+  if(!date)return'';
+  const d=Math.floor((Date.now()-new Date(date))/1000);
+  if(d<60)return'agora';if(d<3600)return Math.floor(d/60)+'min';
+  if(d<86400)return Math.floor(d/3600)+'h';if(d<604800)return Math.floor(d/86400)+'d';
+  return Math.floor(d/604800)+'sem';
+}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ═══════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
