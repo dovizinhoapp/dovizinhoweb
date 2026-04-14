@@ -601,11 +601,12 @@ function applyFilters(){
   }
 
   const cardsHtml=items.map((item,idx)=>{
-    const ad=idx>0&&idx%5===0?`<div class="ad-slot" style="margin:4px 0 8px;overflow:hidden"><ins class="adsbygoogle" style="display:block;width:100%;height:60px;" data-ad-client="ca-pub-1104022821797239" data-ad-slot="auto" data-ad-format="banner"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>`:'';
+    const ad=idx>0&&idx%5===0?'<div class="ad-slot ad-inline" style="margin:4px 0 8px"></div>':'';
     return ad+cardHtml(item);
   }).join('');
 
   list.innerHTML=safetyHtml+locHtml+cardsHtml;
+  setTimeout(()=>{pushAds();renderInlineAds();},100);
 }
 
 function getFiltered(){
@@ -726,7 +727,7 @@ function renderDetail(){
          <div class="seller-av">${item.profiles?.avatar_url?`<img src="${item.profiles.avatar_url}">`:`${sellerInit}`}</div>
          <div><div style="font-size:14px;font-weight:700">${sellerName}</div>${planTag}</div>
        </div>
-       <div class="ad-slot" style="margin:0 0 12px;overflow:hidden"><ins class="adsbygoogle" style="display:block;width:100%;height:60px;" data-ad-client="ca-pub-1104022821797239" data-ad-slot="auto" data-ad-format="banner"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>
+       <div class="ad-slot ad-inline" style="margin:0 0 12px"></div>
        <div style="text-align:center;margin-bottom:10px">
          <span style="font-size:12px;color:var(--dan);cursor:pointer" onclick="reportItem('${item.id}')">🚩 Denunciar anúncio</span>
        </div>
@@ -743,6 +744,31 @@ function renderDetail(){
 // ═══════════════════════════════════════════
 // SWIPE — fotos e entre anúncios
 // ═══════════════════════════════════════════
+
+
+function renderInlineAds(){
+  document.querySelectorAll('.ad-slot.ad-inline:not([data-ad-rendered])').forEach(el=>{
+    el.setAttribute('data-ad-rendered','1');
+    const ins=document.createElement('ins');
+    ins.className='adsbygoogle';
+    ins.style.cssText='display:block;width:100%;height:60px;';
+    ins.setAttribute('data-ad-client','ca-pub-1104022821797239');
+    ins.setAttribute('data-ad-slot','auto');
+    ins.setAttribute('data-ad-format','banner');
+    el.appendChild(ins);
+    try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(e){}
+  });
+}
+
+function pushAds(){
+  try{
+    document.querySelectorAll('.adsbygoogle[data-auto-push="1"]').forEach(el=>{
+      el.removeAttribute('data-auto-push');
+      (window.adsbygoogle=window.adsbygoogle||[]).push({});
+    });
+  }catch(e){}
+}
+
 function initDetailSwipe(){
   const el = document.getElementById('detail-inner');
   if(!el) return;
