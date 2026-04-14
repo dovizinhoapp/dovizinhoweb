@@ -469,7 +469,7 @@ async function loadFavs(){
 
 async function loadListings(){
   try{
-    await sb.rpc('expire_old_listings').catch(()=>{});
+    try{ await sb.rpc('expire_old_listings'); }catch(e){}
     const{data,error}=await sb.from('listings')
       .select('*, profiles(name,plan,avatar_url)')
       .eq('status','active')
@@ -1237,6 +1237,37 @@ async function doForgot(){
   await sb.auth.resetPasswordForEmail(email.toLowerCase(),{redirectTo:'https://dovizinho.com.br/reset-password'});
   showToast('Link enviado! Verifique seu e-mail.');
   S.authView='login';renderAuth();
+}
+
+async function doSignOut(){
+  if(!confirm('Deseja sair da conta?'))return;
+  await sb.auth.signOut();
+  S.user=null;S.profile=null;S.favs=new Set();
+  go('feed');showToast('Até logo!');
+}
+
+async function doDeleteAccount(){
+  if(!confirm('Tem certeza? Todos os seus dados serão excluídos permanentemente.'))return;
+  if(!confirm('Confirme: excluir conta definitivamente?'))return;
+  try{
+    const id=S.user.id;
+    await sb.from('reports').delete().eq('reporter_id',id);
+    await sb.from('favorites').delete().eq('user_id',id);
+    await sb.from('listings').delete().eq('user_id',id);
+    await sb.from('profiles').delete().eq('id',id);
+    await sb.rpc('delete_user');
+    await sb.auth.signOut();
+    S.user=null;S.profile=null;
+    go('feed');showToast('Conta excluída');
+  }catch(e){showToast('Erro ao excluir conta');}
+}
+
+async function delMyAd(id){
+  if(!confirm('Remover este anúncio?'))return;
+  await sb.from('listings').delete().eq('id',id);
+  showToast('Anúncio removido');
+  await loadListings();
+  loadMyAds2();
 }
 
 // ═══════════════════════════════════════════
