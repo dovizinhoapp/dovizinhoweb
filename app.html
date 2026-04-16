@@ -84,8 +84,8 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 /* BOTTOM NAV */
 .bnav{display:flex;background:#fff;border-top:1px solid var(--brd);padding:8px 0 max(20px,env(safe-area-inset-bottom));flex-shrink:0;}
 .bnav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:2px;}
-.bnav-icon{font-size:22px;opacity:0.35;}
-.bnav-icon.on{opacity:1;}
+.bnav-icon{font-size:22px;opacity:0.35;color:#999;display:flex;align-items:center;justify-content:center;}
+.bnav-icon.on{opacity:1;color:var(--pri);}
 .bnav-lbl{font-size:9px;color:#bbb;margin-top:2px;font-weight:600;}
 .bnav-lbl.on{color:var(--pri);}
 .bnav-pub{flex:1;display:flex;align-items:center;justify-content:center;margin-top:-18px;}
@@ -240,6 +240,10 @@ label.lbl{display:block;font-size:12px;font-weight:700;margin-bottom:5px;color:v
 /* MISC */
 textarea.inp{resize:none;height:90px;}
 .form-row{display:flex;gap:10px;}
+
+#splash{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.4s;}
+#splash.hide{opacity:0;pointer-events:none;}
+#splash img{width:160px;height:160px;object-fit:contain;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1104022821797239" crossorigin="anonymous"></script>
 <script>
@@ -265,6 +269,9 @@ if('serviceWorker' in navigator){
 </script>
 </head>
 <body>
+<div id="splash">
+  <img src="/assets/splash.png" onerror="this.src='/assets/icon.png'">
+</div>
 <div id="app">
 
   <!-- SCREEN: FEED -->
@@ -280,10 +287,6 @@ if('serviceWorker' in navigator){
         <span style="opacity:0.7">🔍</span>
         <input id="q" placeholder="Buscar anúncios..." oninput="applyFilters()">
       </div>
-    </div>
-    <div id="install-btn" style="display:none;background:var(--navy);color:#fff;padding:10px 14px;font-size:13px;font-weight:600;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;cursor:pointer" onclick="installPWA()">
-      <span>📲 Instalar o Do Vizinho</span>
-      <span style="background:var(--pri);padding:4px 12px;border-radius:100px;font-size:12px">Instalar</span>
     </div>
     <div class="cats-bar" id="cats-bar"></div>
     <div class="pills-bar" id="filters-bar"></div>
@@ -350,22 +353,22 @@ if('serviceWorker' in navigator){
   <!-- BOTTOM NAV -->
   <div class="bnav" id="bnav">
     <div class="bnav-tab" onclick="go('feed')">
-      <div class="bnav-icon on" id="ni-feed">🏠</div>
+      <div class="bnav-icon on" id="ni-feed"><svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
       <div class="bnav-lbl on" id="nl-feed">Início</div>
     </div>
     <div class="bnav-tab" onclick="go('map')">
-      <div class="bnav-icon" id="ni-map">🗺️</div>
+      <div class="bnav-icon" id="ni-map"><svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg></div>
       <div class="bnav-lbl" id="nl-map">Mapa</div>
     </div>
     <div class="bnav-pub" onclick="go('publish')">
       <div class="pub-circle">➕</div>
     </div>
     <div class="bnav-tab" onclick="go('favorites')">
-      <div class="bnav-icon" id="ni-favorites">❤️</div>
+      <div class="bnav-icon" id="ni-favorites"><svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
       <div class="bnav-lbl" id="nl-favorites">Favoritos</div>
     </div>
     <div class="bnav-tab" onclick="go('profile')">
-      <div class="bnav-icon" id="ni-profile">👤</div>
+      <div class="bnav-icon" id="ni-profile"><svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
       <div class="bnav-lbl" id="nl-profile">Perfil</div>
     </div>
   </div>
@@ -477,6 +480,7 @@ const S = {
 // ═══════════════════════════════════════════
 async function init(){
   renderBars();
+  // Remove splash após carregar
   await getLocation();
   await checkAuth();
   await loadListings();
@@ -1502,7 +1506,10 @@ function installPWA(){
 // ═══════════════════════════════════════════
 // START
 // ═══════════════════════════════════════════
-init();
+init().then(()=>{
+  const s=document.getElementById('splash');
+  if(s){s.classList.add('hide');setTimeout(()=>s.remove(),400);}
+});
 </script>
 </body>
 </html>
