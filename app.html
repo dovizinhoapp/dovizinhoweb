@@ -513,6 +513,9 @@ async function loadListings(){
   }catch(e){console.error('loadListings exception:',e.message);S.listings=[];}
   applyFilters();
   updateMapMarkers();
+  if(S.listings.length===0){
+    showToast('Nenhum anúncio encontrado. Verifique sua conexão.');
+  }
 }
 
 // ═══════════════════════════════════════════
@@ -1188,7 +1191,7 @@ function profScreen(sub){
           <div class="plan-f">Seus anúncios aparecem primeiro</div>
           <div class="plan-f">Sem anúncios publicitários</div>
           <div class="plan-f">Suporte via WhatsApp</div>
-          <button class="plan-btn ${plan==='pro'?'gray':'green'}" onclick="if(plan!=='pro')showToast('Assine pelo app');" style="display:none"</button>
+          <button class="plan-btn ${plan==='pro'?'gray':'green'}" id="btn-plan-pro" onclick="plan!=='pro'&&openPix('pro')">${plan==='pro'?'Plano atual':'💰 Assinar via PIX'}</button>
         </div>
         <div class="plan-card loja">
           <h3>🏪 Loja</h3>
