@@ -363,6 +363,32 @@ textarea.inp{resize:none;height:90px;}
     </div>
   </div>
 
+
+  <!-- MODAL PIX -->
+  <div id="pix-modal" class="overlay" style="display:none">
+    <div class="modal">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div class="modal-title" style="margin:0">💰 Assinar via PIX</div>
+        <div onclick="document.getElementById('pix-modal').style.display='none'" style="cursor:pointer;font-size:20px;color:var(--mut)">✕</div>
+      </div>
+      <div id="pix-plan-info" style="background:var(--pri-lt);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center">
+        <div id="pix-plan-name" style="font-size:16px;font-weight:800;margin-bottom:4px"></div>
+        <div id="pix-plan-price" style="font-size:28px;font-weight:900;color:var(--pri)"></div>
+        <div style="font-size:12px;color:var(--mut)">por mês</div>
+      </div>
+      <div style="font-size:13px;color:var(--mut);margin-bottom:12px;line-height:1.6">
+        Envie o PIX para o número abaixo. Após o pagamento, envie o comprovante via WhatsApp para ativarmos seu plano em até 1 hora.
+      </div>
+      <div style="background:#f5f5f5;border-radius:12px;padding:14px;margin-bottom:12px;text-align:center">
+        <div style="font-size:11px;color:var(--mut);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">Chave PIX</div>
+        <div id="pix-key" style="font-size:16px;font-weight:800;letter-spacing:1px">dovizinhoapp@gmail.com</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:4px">E-mail</div>
+      </div>
+      <button class="btn-pri" onclick="copyPix()" style="margin-bottom:10px">📋 Copiar chave PIX</button>
+      <button class="btn-out" onclick="sendPix()" style="margin-bottom:0">💬 Enviar comprovante no WhatsApp</button>
+    </div>
+  </div>
+
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 </div>
@@ -767,6 +793,44 @@ function pushAds(){
 }
 
 function initDetailSwipe(){
+  // Registrar no elemento da foto especificamente
+  const photo = document.getElementById('det-img');
+  const el = document.querySelector('.detail-photos') || document.querySelector('.detail-ph');
+  const target = photo || el;
+  if(!target) return;
+
+  let startX=0, startY=0, moved=false;
+
+  target.addEventListener('touchstart', e=>{
+    startX=e.touches[0].clientX;
+    startY=e.touches[0].clientY;
+    moved=false;
+  },{passive:true});
+
+  target.addEventListener('touchmove', e=>{
+    moved=true;
+  },{passive:true});
+
+  target.addEventListener('touchend', e=>{
+    if(!moved) return;
+    const dx=e.changedTouches[0].clientX - startX;
+    const dy=e.changedTouches[0].clientY - startY;
+    if(Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)*1.5) return;
+    const photos=S.detail?.photos||[];
+    if(photos.length>1){
+      if(dx < -40) chPhoto(1);
+      else if(dx > 40) chPhoto(-1);
+    } else {
+      const filtered=getFiltered();
+      const idx=filtered.findIndex(i=>i.id===S.detail?.id);
+      if(dx < -40 && idx < filtered.length-1) openDetail(filtered[idx+1].id);
+      else if(dx > 40 && idx > 0) openDetail(filtered[idx-1].id);
+    }
+  },{passive:true});
+}
+
+
+function initAnuncioSwipe(){
   const el = document.getElementById('detail-inner');
   if(!el) return;
   let startX=0, startY=0;
@@ -777,19 +841,12 @@ function initDetailSwipe(){
   el.addEventListener('touchend', e=>{
     const dx=e.changedTouches[0].clientX - startX;
     const dy=e.changedTouches[0].clientY - startY;
-    if(Math.abs(dx)<40||Math.abs(dy)>Math.abs(dx)) return; // não foi swipe horizontal
-    const photos=S.detail?.photos||[];
-    if(photos.length>1){
-      // swipe nas fotos
-      if(dx < -40) chPhoto(1);
-      else if(dx > 40) chPhoto(-1);
-    } else {
-      // swipe entre anúncios
-      const filtered=getFiltered();
-      const idx=filtered.findIndex(i=>i.id===S.detail?.id);
-      if(dx < -40 && idx < filtered.length-1) openDetail(filtered[idx+1].id);
-      else if(dx > 40 && idx > 0) openDetail(filtered[idx-1].id);
-    }
+    // Só swipe muito horizontal e no topo da tela (área da foto)
+    if(Math.abs(dx) < 60 || Math.abs(dy) > 80) return;
+    const filtered=getFiltered();
+    const idx=filtered.findIndex(i=>i.id===S.detail?.id);
+    if(dx < -60 && idx < filtered.length-1) openDetail(filtered[idx+1].id);
+    else if(dx > 60 && idx > 0) openDetail(filtered[idx-1].id);
   },{passive:true});
 }
 
@@ -1162,7 +1219,7 @@ function profScreen(sub){
           <div class="plan-f">Sem anúncios publicitários</div>
           <div class="plan-f">Badge de Loja no perfil</div>
           <div class="plan-f">Suporte prioritário via WhatsApp</div>
-          <button class="plan-btn ${plan==='loja'?'gray':'purple'}" onclick="${plan!=='loja'?'showToast(\'Assine pelo app para usar o plano Loja\')':''}">${plan==='loja'?'Plano atual':'Assinar via App'}</button>
+          <button class="plan-btn ${plan==='loja'?'gray':'purple'}" onclick="${plan!=='loja'?'openPix(\'loja\')':\''}">${plan==='loja'?'Plano atual':'💰 Assinar via PIX'}</button>
         </div>
       </div>`;
   }else if(sub==='settings'){
@@ -1345,7 +1402,29 @@ async function doForgot(){
   S.authView='login';renderAuth();
 }
 
-async function doSignOut(){
+async 
+function openPix(plan){
+  const names={'pro':'⭐ Pro','loja':'🏪 Loja'};
+  const prices={'pro':'R$ 4,90','loja':'R$ 29,90'};
+  document.getElementById('pix-plan-name').textContent=names[plan];
+  document.getElementById('pix-plan-price').textContent=prices[plan];
+  document.getElementById('pix-modal').style.display='flex';
+  S.pixPlan=plan;
+}
+
+function copyPix(){
+  navigator.clipboard?.writeText('dovizinhoapp@gmail.com');
+  showToast('Chave PIX copiada!');
+}
+
+function sendPix(){
+  document.getElementById('pix-modal').style.display='none';
+  const plan=S.pixPlan==='pro'?'Pro R$ 4,90':'Loja R$ 29,90';
+  const msg=encodeURIComponent('Olá! Acabei de fazer o PIX para o plano '+plan+' do Do Vizinho. Segue o comprovante:');
+  window.open('https://wa.me/5511984716999?text='+msg,'_blank');
+}
+
+function doSignOut(){
   if(!confirm('Deseja sair da conta?'))return;
   await sb.auth.signOut();
   S.user=null;S.profile=null;S.favs=new Set();
