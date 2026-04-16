@@ -792,63 +792,43 @@ function pushAds(){
   }catch(e){}
 }
 
-function initDetailSwipe(){
-  // Registrar no elemento da foto especificamente
-  const photo = document.getElementById('det-img');
-  const el = document.querySelector('.detail-photos') || document.querySelector('.detail-ph');
-  const target = photo || el;
-  if(!target) return;
 
-  let startX=0, startY=0, moved=false;
+function initSwipe(){
+  const inner = document.getElementById('detail-inner');
+  if(!inner) return;
 
-  target.addEventListener('touchstart', e=>{
-    startX=e.touches[0].clientX;
-    startY=e.touches[0].clientY;
-    moved=false;
+  let startX=0, startY=0, startTime=0;
+
+  inner.addEventListener('touchstart', e=>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    startTime = Date.now();
   },{passive:true});
 
-  target.addEventListener('touchmove', e=>{
-    moved=true;
-  },{passive:true});
+  inner.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    const dt = Date.now() - startTime;
+    // Swipe rápido e horizontal
+    if(dt > 400 || Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)*0.8) return;
 
-  target.addEventListener('touchend', e=>{
-    if(!moved) return;
-    const dx=e.changedTouches[0].clientX - startX;
-    const dy=e.changedTouches[0].clientY - startY;
-    if(Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)*1.5) return;
-    const photos=S.detail?.photos||[];
-    if(photos.length>1){
-      if(dx < -40) chPhoto(1);
-      else if(dx > 40) chPhoto(-1);
+    const photos = S.detail?.photos || [];
+    const onPhoto = e.target.closest('.detail-photos') || e.target.id === 'det-img';
+
+    if(onPhoto && photos.length > 1){
+      // Swipe entre fotos
+      if(dx < -50) chPhoto(1);
+      else chPhoto(-1);
     } else {
-      const filtered=getFiltered();
-      const idx=filtered.findIndex(i=>i.id===S.detail?.id);
-      if(dx < -40 && idx < filtered.length-1) openDetail(filtered[idx+1].id);
-      else if(dx > 40 && idx > 0) openDetail(filtered[idx-1].id);
+      // Swipe entre anúncios
+      const filtered = getFiltered();
+      const idx = filtered.findIndex(i => i.id === S.detail?.id);
+      if(dx < -50 && idx < filtered.length-1) openDetail(filtered[idx+1].id);
+      else if(dx > 50 && idx > 0) openDetail(filtered[idx-1].id);
     }
   },{passive:true});
 }
 
-
-function initAnuncioSwipe(){
-  const el = document.getElementById('detail-inner');
-  if(!el) return;
-  let startX=0, startY=0;
-  el.addEventListener('touchstart', e=>{
-    startX=e.touches[0].clientX;
-    startY=e.touches[0].clientY;
-  },{passive:true});
-  el.addEventListener('touchend', e=>{
-    const dx=e.changedTouches[0].clientX - startX;
-    const dy=e.changedTouches[0].clientY - startY;
-    // Só swipe muito horizontal e no topo da tela (área da foto)
-    if(Math.abs(dx) < 60 || Math.abs(dy) > 80) return;
-    const filtered=getFiltered();
-    const idx=filtered.findIndex(i=>i.id===S.detail?.id);
-    if(dx < -60 && idx < filtered.length-1) openDetail(filtered[idx+1].id);
-    else if(dx > 60 && idx > 0) openDetail(filtered[idx-1].id);
-  },{passive:true});
-}
 
 function chPhoto(d){
   const photos=S.detail?.photos||[];
@@ -1208,7 +1188,7 @@ function profScreen(sub){
           <div class="plan-f">Seus anúncios aparecem primeiro</div>
           <div class="plan-f">Sem anúncios publicitários</div>
           <div class="plan-f">Suporte via WhatsApp</div>
-          <button class="plan-btn ${plan==='pro'?'gray':'green'}" onclick="${plan!=='pro'?'showToast(\'Assine pelo app para usar o plano Pro\')':''}">${plan==='pro'?'Plano atual':'Assinar via App'}</button>
+          <button class="plan-btn ${plan==='pro'?'gray':'green'}" onclick="if(plan!=='pro')showToast('Assine pelo app');" style="display:none"</button>
         </div>
         <div class="plan-card loja">
           <h3>🏪 Loja</h3>
@@ -1219,7 +1199,7 @@ function profScreen(sub){
           <div class="plan-f">Sem anúncios publicitários</div>
           <div class="plan-f">Badge de Loja no perfil</div>
           <div class="plan-f">Suporte prioritário via WhatsApp</div>
-          <button class="plan-btn ${plan==='loja'?'gray':'purple'}" onclick="${plan!=='loja'?'openPix(\'loja\')':\''}">${plan==='loja'?'Plano atual':'💰 Assinar via PIX'}</button>
+          <button class="plan-btn ${plan==='loja'?'gray':'purple'}" id="btn-plan-loja" onclick="plan!=='loja'&&openPix('loja')">${plan==='loja'?'Plano atual':'💰 Assinar via PIX'}</button>
         </div>
       </div>`;
   }else if(sub==='settings'){
