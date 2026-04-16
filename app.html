@@ -242,6 +242,27 @@ textarea.inp{resize:none;height:90px;}
 .form-row{display:flex;gap:10px;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1104022821797239" crossorigin="anonymous"></script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  });
+  // Prompt de instalação
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e=>{
+    e.preventDefault();
+    deferredPrompt=e;
+    // Mostrar botão de instalar se existir
+    const btn=document.getElementById('install-btn');
+    if(btn) btn.style.display='flex';
+  });
+  window.addEventListener('appinstalled', ()=>{
+    deferredPrompt=null;
+    const btn=document.getElementById('install-btn');
+    if(btn) btn.style.display='none';
+  });
+}
+</script>
 </head>
 <body>
 <div id="app">
@@ -259,6 +280,10 @@ textarea.inp{resize:none;height:90px;}
         <span style="opacity:0.7">🔍</span>
         <input id="q" placeholder="Buscar anúncios..." oninput="applyFilters()">
       </div>
+    </div>
+    <div id="install-btn" style="display:none;background:var(--navy);color:#fff;padding:10px 14px;font-size:13px;font-weight:600;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;cursor:pointer" onclick="installPWA()">
+      <span>📲 Instalar o Do Vizinho</span>
+      <span style="background:var(--pri);padding:4px 12px;border-radius:100px;font-size:12px">Instalar</span>
     </div>
     <div class="cats-bar" id="cats-bar"></div>
     <div class="pills-bar" id="filters-bar"></div>
@@ -1465,6 +1490,13 @@ function ago(date){
 function showToast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+function installPWA(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(()=>{ deferredPrompt=null; });
+  }
 }
 
 // ═══════════════════════════════════════════
