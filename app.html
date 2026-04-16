@@ -1404,7 +1404,7 @@ function sendPix(){
   window.open('https://wa.me/5511984716999?text='+msg,'_blank');
 }
 
-function doSignOut(){
+async function doSignOut(){
   if(!confirm('Deseja sair da conta?'))return;
   await sb.auth.signOut();
   S.user=null;S.profile=null;S.favs=new Set();
