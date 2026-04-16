@@ -99,7 +99,7 @@ html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);colo
 
 /* ITEM DETAIL */
 .detail-photos{background:#111;position:relative;flex-shrink:0;}
-.detail-photos img{width:100%;height:280px;object-fit:contain;display:block;}
+.detail-photos{background:#000;position:relative;flex-shrink:0;}
 .detail-ph{width:100%;height:220px;display:flex;align-items:center;justify-content:center;font-size:64px;background:#f5f5f5;}
 .detail-back{position:absolute;top:50px;left:14px;width:36px;height:36px;border-radius:18px;background:rgba(0,0,0,0.55);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;z-index:10;}
 .photo-nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:16px;background:rgba(0,0,0,0.4);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;z-index:10;}
@@ -687,28 +687,29 @@ function renderDetail(){
   const planTag=plan==='loja'?`<span class="plan-tag loja">🏪 Loja</span>`:plan==='pro'?`<span class="plan-tag pro">⭐ Pro</span>`:'';
   const fav=S.favs.has(item.id);
 
-  const photoHtml=photos.length?`
-    <div class="detail-photos">
-      <div class="detail-back" onclick="goBack()" style="background:rgba(255,255,255,0.9);color:#333;font-size:13px;font-weight:700;width:auto;padding:6px 12px;border-radius:100px;gap:4px;display:flex;align-items:center">← Voltar</div>
-      <div style="position:absolute;top:50px;right:14px;display:flex;gap:8px;z-index:10">
-        <div onclick="toggleFav('${item.id}');renderDetail()" style="background:rgba(255,255,255,0.9);width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px">${fav?'❤️':'🤍'}</div>
-        <div onclick="shareItem('${item.id}')" style="background:rgba(255,255,255,0.9);width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px">📤</div>
-      </div>
-      <img id="det-img" src="${photos[S.photoIdx]}" style="width:100%;height:280px;object-fit:contain;background:#111;display:block;">
-      ${photos.length>1?`
-        <div class="photo-nav" style="left:8px" onclick="chPhoto(-1)">‹</div>
-        <div class="photo-nav" style="right:8px" onclick="chPhoto(1)">›</div>
-        <div class="photo-dots">${photos.map((_,i)=>`<div class="photo-dot ${i===S.photoIdx?'on':''}"></div>`).join('')}</div>
-      `:''}
-    </div>`
-  :`<div class="detail-ph" style="position:relative">
-      <div onclick="goBack()" style="position:absolute;top:50px;left:14px;background:rgba(255,255,255,0.9);color:#333;font-size:13px;font-weight:700;padding:6px 12px;border-radius:100px;cursor:pointer;z-index:10">← Voltar</div>
-      ${cat?.i||'📦'}
-    </div>`;
+   const topBar=`<div style="display:flex;align-items:center;justify-content:space-between;padding:48px 14px 8px;background:#fff">
+     <div onclick="goBack()" style="display:flex;align-items:center;gap:4px;color:var(--pri);font-size:14px;font-weight:700;cursor:pointer">← Voltar</div>
+     <div style="display:flex;gap:8px">
+       <div onclick="toggleFav('${item.id}');renderDetail()" style="width:36px;height:36px;border-radius:18px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px">${fav?'❤️':'🤍'}</div>
+       <div onclick="shareItem('${item.id}')" style="width:36px;height:36px;border-radius:18px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px">📤</div>
+     </div>
+   </div>`;
+
+   const photoHtml=photos.length?`
+     <div class="detail-photos">
+       <img id="det-img" src="${photos[S.photoIdx]}" style="width:100%;height:280px;object-fit:cover;display:block;">
+       ${photos.length>1?`
+         <div class="photo-nav" style="left:8px" onclick="chPhoto(-1)">‹</div>
+         <div class="photo-nav" style="right:8px" onclick="chPhoto(1)">›</div>
+         <div class="photo-dots">${photos.map((_,i)=>`<div class="photo-dot ${i===S.photoIdx?'on':''}"></div>`).join('')}</div>
+       `:''}
+     </div>`
+   :`<div class="detail-ph">${cat?.i||'📦'}</div>`;
 
    document.getElementById('detail-inner').innerHTML=`
+     ${topBar}
      ${photoHtml}
-     <div class="detail-body">
+      <div class="detail-body">
        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
          <span style="background:${isPet?'#E91E63':isWanted?'#FF9800':item.price===0?'#4CAF50':'#2DB67D'};color:#fff;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700">${isPet?'🐾 PET PERDIDO':isWanted?'🔎 PROCURO':item.price===0?'🎁 GRÁTIS':'💰 À VENDA'}</span>
          ${cat?`<span style="background:#f0f0f0;color:#555;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600">${cat.i} ${cat.l}</span>`:''}
@@ -723,10 +724,6 @@ function renderDetail(){
        </div>
        ${isExpiringSoon(item.expires_at)?`<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:13px;color:#F57F17">⏰ <strong>Expira hoje!</strong></div>`:''}
        ${item.description?`<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid var(--brd)"><div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">DESCRIÇÃO</div><div style="font-size:14px;color:#444;line-height:1.65">${item.description}</div></div>`:''}
-       <div class="seller-card">
-         <div class="seller-av">${item.profiles?.avatar_url?`<img src="${item.profiles.avatar_url}">`:`${sellerInit}`}</div>
-         <div><div style="font-size:14px;font-weight:700">${sellerName}</div>${planTag}</div>
-       </div>
        <div class="ad-slot ad-inline" style="margin:0 0 12px"></div>
        <div style="text-align:center;margin-bottom:10px">
          <span style="font-size:12px;color:var(--dan);cursor:pointer" onclick="reportItem('${item.id}')">🚩 Denunciar anúncio</span>
