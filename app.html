@@ -763,6 +763,7 @@ function renderDetail(){
          Chamar no WhatsApp
        </button>
      </div>`;
+  setTimeout(()=>{initSwipe();pushAds();renderInlineAds();}, 50);
 }
 
 
@@ -797,37 +798,39 @@ function pushAds(){
 
 
 function initSwipe(){
-  const inner = document.getElementById('detail-inner');
-  if(!inner) return;
+  // Registrar no s-detail (o container da tela inteira, sem scroll)
+  const screen = document.getElementById('s-detail');
+  if(!screen) return;
 
   let startX=0, startY=0, startTime=0;
 
-  inner.addEventListener('touchstart', e=>{
+  screen.addEventListener('touchstart', e=>{
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     startTime = Date.now();
   },{passive:true});
 
-  inner.addEventListener('touchend', e=>{
+  screen.addEventListener('touchend', e=>{
     const dx = e.changedTouches[0].clientX - startX;
     const dy = e.changedTouches[0].clientY - startY;
     const dt = Date.now() - startTime;
-    // Swipe rápido e horizontal
-    if(dt > 400 || Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)*0.8) return;
+    if(dt > 500) return; // muito lento
+    if(Math.abs(dx) < 50) return; // muito curto
+    if(Math.abs(dy) > Math.abs(dx)) return; // mais vertical que horizontal
 
     const photos = S.detail?.photos || [];
-    const onPhoto = e.target.closest('.detail-photos') || e.target.id === 'det-img';
+    const onPhoto = e.target.closest('.detail-photos') != null || e.target.id === 'det-img';
 
     if(onPhoto && photos.length > 1){
       // Swipe entre fotos
-      if(dx < -50) chPhoto(1);
+      if(dx < 0) chPhoto(1);
       else chPhoto(-1);
     } else {
-      // Swipe entre anúncios
+      // Swipe entre anúncios (qualquer área)
       const filtered = getFiltered();
       const idx = filtered.findIndex(i => i.id === S.detail?.id);
-      if(dx < -50 && idx < filtered.length-1) openDetail(filtered[idx+1].id);
-      else if(dx > 50 && idx > 0) openDetail(filtered[idx-1].id);
+      if(dx < 0 && idx < filtered.length-1) openDetail(filtered[idx+1].id);
+      else if(dx > 0 && idx > 0) openDetail(filtered[idx-1].id);
     }
   },{passive:true});
 }
