@@ -241,6 +241,9 @@ label.lbl{display:block;font-size:12px;font-weight:700;margin-bottom:5px;color:v
 textarea.inp{resize:none;height:90px;}
 .form-row{display:flex;gap:10px;}
 
+#s-detail{position:relative;}
+#detail-inner{transition:transform 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.3s;}
+#s-detail{position:relative;}
 #splash{position:fixed;inset:0;background:#ffffff;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.4s;}
 #splash.hide{opacity:0;pointer-events:none;}
 #splash img{width:120px;height:120px;object-fit:contain;border-radius:24px;}
@@ -856,8 +859,38 @@ function initSwipe(){
     if(Math.abs(dy)>60&&Math.abs(dy)>Math.abs(dx)){
       const filtered=getFiltered();
       const idx=filtered.findIndex(i=>i.id===S.detail?.id);
-      if(dy<0&&idx<filtered.length-1)openDetail(filtered[idx+1].id); // swipe para cima = próximo
-      else if(dy>0&&idx>0)openDetail(filtered[idx-1].id);            // swipe para baixo = anterior
+      const inner=document.getElementById('detail-inner');
+      if(dy<0&&idx<filtered.length-1){
+        // Animar saída para cima
+        inner.style.transform='translateY(-100%)';
+        inner.style.opacity='0';
+        setTimeout(()=>{
+          inner.style.transition='none';
+          inner.style.transform='translateY(100%)';
+          inner.style.opacity='0';
+          openDetail(filtered[idx+1].id);
+          requestAnimationFrame(()=>requestAnimationFrame(()=>{
+            inner.style.transition='transform 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.3s';
+            inner.style.transform='translateY(0)';
+            inner.style.opacity='1';
+          }));
+        },300);
+      }else if(dy>0&&idx>0){
+        // Animar saída para baixo
+        inner.style.transform='translateY(100%)';
+        inner.style.opacity='0';
+        setTimeout(()=>{
+          inner.style.transition='none';
+          inner.style.transform='translateY(-100%)';
+          inner.style.opacity='0';
+          openDetail(filtered[idx-1].id);
+          requestAnimationFrame(()=>requestAnimationFrame(()=>{
+            inner.style.transition='transform 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.3s';
+            inner.style.transform='translateY(0)';
+            inner.style.opacity='1';
+          }));
+        },300);
+      }
     }
   },{passive:true});
 }
