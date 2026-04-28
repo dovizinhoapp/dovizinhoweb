@@ -829,7 +829,7 @@ function pushAds(){
 
 let _swipeInit=false;
 function initSwipe(){
-  if(_swipeInit)return; // só registra uma vez
+  if(_swipeInit)return;
   _swipeInit=true;
   const screen=document.getElementById('s-detail');
   if(!screen)return;
@@ -844,16 +844,20 @@ function initSwipe(){
     const dx=e.changedTouches[0].clientX-startX;
     const dy=e.changedTouches[0].clientY-startY;
     const dt=Date.now()-startTime;
-    if(dt>500||Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx)*1.2)return;
-    const photos=S.detail?.photos||[];
+    if(dt>500)return;
     const onPhoto=!!e.target.closest('.detail-photos')||e.target.id==='det-img';
-    if(onPhoto&&photos.length>1){
+    const photos=S.detail?.photos||[];
+    // Swipe horizontal — só nas fotos com mais de uma foto
+    if(onPhoto&&photos.length>1&&Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){
       if(dx<0)chPhoto(1);else chPhoto(-1);
-    }else{
+      return;
+    }
+    // Swipe vertical — entre anúncios (estilo Instagram)
+    if(Math.abs(dy)>60&&Math.abs(dy)>Math.abs(dx)){
       const filtered=getFiltered();
       const idx=filtered.findIndex(i=>i.id===S.detail?.id);
-      if(dx<0&&idx<filtered.length-1)openDetail(filtered[idx+1].id);
-      else if(dx>0&&idx>0)openDetail(filtered[idx-1].id);
+      if(dy<0&&idx<filtered.length-1)openDetail(filtered[idx+1].id); // swipe para cima = próximo
+      else if(dy>0&&idx>0)openDetail(filtered[idx-1].id);            // swipe para baixo = anterior
     }
   },{passive:true});
 }
